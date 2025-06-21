@@ -2,8 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-/* { path: '/', component: Home },
- { path: '/about', component: About } */
+
   { path: '/contador', 
     name: 'contador',
     component: () => import('../components/Contador.vue')
@@ -16,8 +15,8 @@ const routes = [
    name: 'main', 
    component: () => import('../views/MainView.vue')
    },
-   { path: '/taskView',
-   name: 'taskView', 
+   { path: '/task',
+   name: 'task', 
    component: () => import('../views/TaskView.vue')
    },
     { path: '/newTask',

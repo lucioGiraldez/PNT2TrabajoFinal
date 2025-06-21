@@ -5,17 +5,16 @@ import ListaTareas from './components/ListaTareas.vue';
 </script>
 
 <template>
-<h1>ESTAMOS EN APP.VUE
-  aguante la falopa!!!
-</h1>
+<h1>ESTAMOS EN APP.VUE</h1>
 <div>
     <nav>
-      <RouterLink to ="/">Tareas</RouterLink>
-      <RouterLink to ="/taskView">Ver Tareas</RouterLink>
+      <RouterLink to ="/task">Ver Tareas</RouterLink>
+      <RouterLink to ="/newTask">Agregar Tarea</RouterLink>
 
-      <MainView></MainView>      
+      <!-- <MainView></MainView>       -->
     </nav>
-    
+    <!-- ESTE ES EL COMPONENTE QUE FALTABA PARA MOSTRAR LOS ROUTERLINK -->
+    <RouterView />
   </div>
 </template>
 
