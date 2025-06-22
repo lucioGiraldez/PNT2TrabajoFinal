@@ -47,7 +47,7 @@ const agregarTarea = async () => {
     await axios.post(CRUD_API, {
       titulo: nuevaTarea.value,
       completada: false,
-      userId: 99
+      userId: Math.floor(Math.random() * 100) + 1
     })
     nuevaTarea.value = ''
     await mostrarTareas()
