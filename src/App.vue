@@ -3,7 +3,7 @@ import { ref, onMounted, watch, provide } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import DashboardStats from './components/DashboardStats.vue'
-
+import GraficoTareas from './components/GraficoTareas.vue'
 
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 const darkMode = ref(false)
@@ -91,6 +91,8 @@ watch(darkMode, (value) => {
   <div v-if="route.path === '/' ">
     <h2>📊 Estadísticas Generales</h2>
     <DashboardStats />
+    <GraficoTareas />
+
   </div>
 
 </template>

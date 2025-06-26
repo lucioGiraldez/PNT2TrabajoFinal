@@ -1,0 +1,91 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import { Bar } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+} from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+
+const MOCKAPI_USERS = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
+const MOCKAPI_TASKS = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
+
+const usuarios = ref([])
+const tareas = ref([])
+
+const cargarDatos = async () => {
+  const [resUsuarios, resTareas] = await Promise.all([
+    axios.get(MOCKAPI_USERS),
+    axios.get(MOCKAPI_TASKS)
+  ])
+
+  usuarios.value = resUsuarios.data
+  tareas.value = resTareas.data
+}
+
+onMounted(cargarDatos)
+
+const nombresUsuarios = computed(() => usuarios.value.map(u => u.nombre))
+
+const cantidadTareasPorUsuario = computed(() => {
+  return usuarios.value.map(u => tareas.value.filter(t => t.userId == u.id).length)
+})
+
+const cantidadCompletadasPorUsuario = computed(() => {
+  return usuarios.value.map(u => tareas.value.filter(t => t.userId == u.id && t.completada).length)
+})
+
+const chartDataTareas = computed(() => ({
+  labels: nombresUsuarios.value,
+  datasets: [
+    {
+      label: 'Tareas asignadas',
+      backgroundColor: '#3b82f6',
+      data: cantidadTareasPorUsuario.value
+    }
+  ]
+}))
+
+const chartDataCompletadas = computed(() => ({
+  labels: nombresUsuarios.value,
+  datasets: [
+    {
+      label: 'Tareas completadas',
+      backgroundColor: '#22c55e',
+      data: cantidadCompletadasPorUsuario.value
+    }
+  ]
+}))
+
+const chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top'
+    }
+  }
+}
+</script>
+
+<template>
+  <div>
+    <h2>📊 Tareas asignadas por usuario</h2>
+    <Bar v-if="usuarios.length" :data="chartDataTareas" :options="chartOptions" />
+
+    <h2>📊 Tareas completadas por usuario</h2>
+    <Bar v-if="usuarios.length" :data="chartDataCompletadas" :options="chartOptions" />
+  </div>
+</template>
+
+<style scoped>
+h2 {
+  margin: 1rem 0;
+}
+</style>
