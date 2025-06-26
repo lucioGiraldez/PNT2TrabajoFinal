@@ -161,9 +161,9 @@ body.dark .task-card {
   color: #f9fafb;
 }
 .divider {
-  margin: 2rem 0;          /* Espaciado arriba y abajo */
-  height: 1px;             /* Grosor de la línea */
-  background-color: #ccc;  /* Color gris claro */
+  margin: 2rem 0;
+  height: 1px;
+  background-color: #ccc;
   width: 100%;
 }
 </style>

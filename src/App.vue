@@ -70,11 +70,11 @@ watch(darkMode, (value) => {
     :class="{ active: route.path === '/task' }"
   >Ver Tareas</RouterLink>
 
-  <RouterLink
+  <!-- <RouterLink
     to="/newTask"
     class="nav-button"
     :class="{ active: route.path === '/newTask' }"
-  >Agregar Tarea</RouterLink>
+  >Agregar Tarea</RouterLink> -->
 
   <RouterLink
     to="/users"

@@ -71,11 +71,18 @@ const toggleCompletada = async (tarea) => {
     console.error('Error al actualizar tarea', err)
   }
 }
+
+const irANuevaVistaTarea = () => {
+  router.push('/newTask')
+}
 </script>
 
 <template>
   <main class="task-container">
     <h2>Tu lista de tareas:</h2>
+    <button class="button modern" @click="irANuevaVistaTarea">➕ Agregar Tarea</button>
+
+    <div class="divider"></div>
     <div v-if="cargando">⏳ Cargando tareas...</div>
     <p v-else-if="error" class="error">{{ error }}</p>
 
@@ -239,6 +246,21 @@ body.dark .estado-btn.pendiente {
 
 body.dark .completada input[type="checkbox"] {
   accent-color: #22c55e;
+}
+
+.divider {
+  margin: 2rem 0;
+  height: 1px;
+  background-color: #ccc;
+  width: 100%;
+}
+
+.button.modern {
+  background-color: #3b82f6;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 </style>
