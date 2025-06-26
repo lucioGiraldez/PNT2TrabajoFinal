@@ -3,14 +3,10 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-const DUMMY_API = 'https://dummyjson.com/todos'
-const CRUD_API = 'https://crudcrud.com/api/b891e4abe02d47febcdd172dfda64e6c/tareas'
+const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 
-//Esto es para poder llamar al id del parametro /editTask/:id
 const router = useRouter() 
 const route = useRoute()
-
-// Variables reactivas
 const titulo = ref('')
 const completada = ref('')
 const userId = ref('')
@@ -27,10 +23,9 @@ const cargarTareaAEditar = async () => {
     
 
     try {
-        const response = await axios.get(`${CRUD_API}/${taskId}`)
+        const response = await axios.get(`${MOCKAPI}/${taskId}`)
         taskToEdit.value = response.data
         
-        // Asignás a los campos del formulario
         titulo.value = taskToEdit.value.titulo
         completada.value = taskToEdit.value.completada
         userId.value = taskToEdit.value.userId
@@ -47,10 +42,9 @@ const editarTarea = async () => {
     const confirmar = confirm(`¿Guardar cambios de "${titulo.value}"?`)
   if (confirmar) {
     try {
-      await axios.put(`${CRUD_API}/${taskToEdit.value._id}`, taskToEdit.value)
+      await axios.put(`${MOCKAPI}/${taskToEdit.value._id}`, taskToEdit.value)
       alert(`✅ Tarea "${titulo.value}" editada con éxito`)
       router.push('/task')
-      //await mostrarTareas()
     } catch (error) {
       console.log('Error al editar tarea', error)
     }
@@ -64,7 +58,7 @@ onMounted(()=>{
 </script>
 
 <template>
-<H1>EDITAR LIBRO</H1>
+<H1>Editar Tarea</H1>
 <main>
 <form @submit.prevent="editarTarea">
   <div>
@@ -92,4 +86,84 @@ onMounted(()=>{
 </main>
 </template>
 
-<style></style>
+<style scoped>
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--card-color, white);
+  border-radius: var(--border-radius, 12px);
+  box-shadow: var(--shadow, 0 2px 6px rgba(0, 0, 0, 0.1));
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+form > div {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+input,
+select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #22c55e;
+}
+
+button[type="submit"] {
+  background-color: var(--primary-color, #3b82f6);
+  color: white;
+  font-weight: bold;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+button[type="submit"]:hover {
+  background-color: var(--secondary-color, #2563eb);
+}
+
+/* Modo oscuro */
+body.dark main {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+body.dark input,
+body.dark select {
+  background-color: #374151;
+  color: #f9fafb;
+  border: 1px solid #4b5563;
+}
+
+body.dark button[type="submit"] {
+  background-color: #374151;
+}
+
+body.dark button[type="submit"]:hover {
+  background-color: #4b5563;
+}
+</style>

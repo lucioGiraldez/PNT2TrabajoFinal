@@ -1,7 +1,33 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, provide } from 'vue'
+import axios from 'axios'
+import { useRoute } from 'vue-router'
+import DashboardStats from './components/DashboardStats.vue'
 
+
+const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 const darkMode = ref(false)
+const total = ref(0)
+const completadas = ref(0)
+const pendientes = ref(0)
+const route = useRoute()
+const dashboardRef = ref()
+provide('dashboardRef', dashboardRef)
+
+
+const cargarEstadisticas = async () => {
+  try {
+    const res = await axios.get(MOCKAPI)
+    const tareas = res.data
+
+    total.value = tareas.length
+    completadas.value = tareas.filter(t => t.completada).length
+    pendientes.value = tareas.filter(t => !t.completada).length
+  } catch (err) {
+    console.error('Error al cargar estadísticas', err)
+  }
+}
+
 
 const toggleDarkMode = () => {
   darkMode.value = !darkMode.value
@@ -13,6 +39,7 @@ onMounted(() => {
     darkMode.value = true
     document.body.classList.add('dark')
   }
+  cargarEstadisticas()
 })
 
 watch(darkMode, (value) => {
@@ -30,31 +57,36 @@ watch(darkMode, (value) => {
     </header>
 
     <nav class="navbar">
-      <RouterLink to="/task" class="nav-button">Ver Tareas</RouterLink>       
-      <RouterLink to="/newTask" class="nav-button">Agregar Tarea</RouterLink>
-    </nav>
+      
+    <RouterLink
+    to="/main"
+    class="nav-button"
+    :class="{ active: route.path === '/main' }"
+  >Estadísticas</RouterLink>
+
+  <RouterLink
+    to="/task"
+    class="nav-button"
+    :class="{ active: route.path === '/task' }"
+  >Ver Tareas</RouterLink>
+
+  <RouterLink
+    to="/newTask"
+    class="nav-button"
+    :class="{ active: route.path === '/newTask' }"
+  >Agregar Tarea</RouterLink>
+</nav>
 
     <main class="main-content">
       <RouterView />
     </main>
   </div>
 
-  
+  <div v-if="route.path === '/main'">
+    <h2>📊 Estadísticas generales</h2>
+    <DashboardStats />
+  </div>
 
-  <section class="dashboard">
-    <div class="stat-card">
-      <h3>Total de tareas</h3>
-      <p>12</p>
-    </div>
-    <div class="stat-card">
-      <h3>Completadas</h3>
-      <p>8</p>
-    </div>
-    <div class="stat-card">
-      <h3>Pendientes</h3>
-      <p>4</p>
-    </div>
-  </section>
 </template>
 
 <style>
@@ -117,10 +149,11 @@ watch(darkMode, (value) => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.router-link-exact-active.nav-button {
-  background-color: #22c55e; /* verde activo */
+.nav-button.active {
+  background-color: #22c55e; /* mismo verde que usabas */
   color: #fff;
 }
+
 
 /* Modo oscuro */
 body.dark {

@@ -1,22 +1,23 @@
 <script setup>
 import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const DUMMY_API = 'https://dummyjson.com/todos'
-const CRUD_API = 'https://crudcrud.com/api/26d60326a22d423090ef86d091bbf000/tareas'
+const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 
 const tareas = ref([])
 const nuevaTarea = ref("")
 const cargando = ref(false)
 const error = ref("")
+const dashboardRef = inject('dashboardRef')
+
 
 const mostrarTareas = async () => {
   cargando.value = true
   try {
-    const res = await axios.get(CRUD_API)
+    const res = await axios.get(MOCKAPI)
     tareas.value = res.data
   } catch (err) {
     error.value = 'Error al cargar tareas.'
@@ -26,35 +27,14 @@ const mostrarTareas = async () => {
   }
 }
 
-const inicializarConDummy = async () => {
-  try {
-    const resCrud = await axios.get(CRUD_API)
-    if (resCrud.data.length === 0) {
-      const resDummy = await axios.get(DUMMY_API)
-      const tareasDummy = resDummy.data.todos.slice(0, 5)
-
-      for (const tarea of tareasDummy) {
-        await axios.post(CRUD_API, {
-          titulo: tarea.todo,
-          completada: tarea.completed,
-          userId: tarea.userId
-        })
-      }
-    }
-  } catch (err) {
-    console.error("Error al inicializar con dummy", err)
-  }
-}
-
 onMounted(async () => {
-  await inicializarConDummy()
   await mostrarTareas()
 })
 
 const agregarTarea = async () => {
   if (nuevaTarea.value.trim() === '') return
   try {
-    await axios.post(CRUD_API, {
+    await axios.post(MOCKAPI, {
       titulo: nuevaTarea.value,
       completada: false,
       userId: Math.floor(Math.random() * 100) + 1
@@ -66,23 +46,23 @@ const agregarTarea = async () => {
   }
 }
 
-const eliminarTarea = async (_id, titulo) => {
-  if (!confirm(`¿Eliminar "${titulo}"?`)) return
+const eliminarTarea = async (id, titulo) => {
+  if (!confirm(`❌¿Eliminar "${titulo}"?`)) return
   try {
-    await axios.delete(`${CRUD_API}/${_id}`)
+    await axios.delete(`${MOCKAPI}/${id}`)
     await mostrarTareas()
   } catch (err) {
     console.error('Error al eliminar tarea', err)
   }
 }
 
-const editarTarea = (_id) => {
-  router.push(`/editTask/${_id}`)
+const editarTarea = (id) => {
+  router.push(`/editTask/${id}`)
 }
 
 const toggleCompletada = async (tarea) => {
   try {
-    await axios.put(`${CRUD_API}/${tarea._id}`, {
+    await axios.put(`${MOCKAPI}/${tarea.id}`, {
       titulo: tarea.titulo,
       completada: !tarea.completada,
       userId: tarea.userId
@@ -96,29 +76,27 @@ const toggleCompletada = async (tarea) => {
 
 <template>
   <main class="task-container">
-    <h2>📋 Gestor de Tareas</h2>
-
-    <div class="add-task">
-      <input v-model="nuevaTarea" placeholder="Escribí una tarea" />
-      <button class="button" @click="agregarTarea">Agregar</button>
-    </div>
-
+    <h2>Tu lista de tareas:</h2>
     <div v-if="cargando">⏳ Cargando tareas...</div>
     <p v-else-if="error" class="error">{{ error }}</p>
 
     <div v-else-if="tareas.length" class="task-list">
-      <div v-for="t in tareas" :key="t._id" class="task-card">
+      <div v-for="t in tareas" :key="t.id" class="task-card">
         <h3>{{ t.titulo }}</h3>
-        <div class="completada">
-          <label>
-            <input type="checkbox" :checked="t.completada" @change="toggleCompletada(t)" />
-            {{ t.completada ? 'Completada' : 'Pendiente' }}
-          </label>
-        </div>
+<div class="completada">
+  <span class="estado-label">Estado:</span>
+  <button
+    class="estado-btn"
+    :class="t.completada ? 'completa' : 'pendiente'"
+    @click="toggleCompletada(t)"
+  >
+    {{ t.completada ? 'Completada' : 'Pendiente' }}
+  </button>
+</div>
         <p>👤 Usuario: {{ t.userId }}</p>
         <div class="actions">
-          <button class="button danger" @click="eliminarTarea(t._id, t.titulo)">Eliminar</button>
-          <button class="button secondary" @click="editarTarea(t._id)">Editar</button>
+          <button class="button danger" @click="eliminarTarea(t.id, t.titulo)">Eliminar</button>
+          <button class="button secondary" @click="editarTarea(t.id)">Editar</button>
         </div>
       </div>
     </div>
@@ -215,15 +193,49 @@ body.dark input {
   color: white;
   border-color: #555;
 }
-
 .completada {
   margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.completada input[type="checkbox"] {
-  margin-right: 0.5rem;
-  transform: scale(1.2);
+.estado-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.estado-btn {
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 9999px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.estado-btn.completa {
+  background-color: #22c55e;
+}
+
+.estado-btn.pendiente {
+  background-color: #9ca3af;
+}
+
+/* Modo oscuro */
+body.dark .estado-label {
+  color: #d1d5db;
+}
+
+body.dark .estado-btn.completa {
+  background-color: #16a34a;
+}
+
+body.dark .estado-btn.pendiente {
+  background-color: #6b7280;
 }
 
 body.dark .completada input[type="checkbox"] {
