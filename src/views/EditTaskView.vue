@@ -42,7 +42,13 @@ const editarTarea = async () => {
     const confirmar = confirm(`¿Guardar cambios de "${titulo.value}"?`)
   if (confirmar) {
     try {
-      await axios.put(`${MOCKAPI}/${taskToEdit.value._id}`, taskToEdit.value)
+      const tareaActualizada = {
+        titulo: titulo.value,
+        completada: completada.value === "true",
+        userId: taskToEdit.value.userId // se mantiene sin modificar
+      }
+
+      await axios.put(`${MOCKAPI}/${taskToEdit.value.id}`, tareaActualizada)
       alert(`✅ Tarea "${titulo.value}" editada con éxito`)
       router.push('/task')
     } catch (error) {
@@ -74,12 +80,6 @@ onMounted(()=>{
     <option value="false">No</option>
   </select>
 </div>
-
-  <div>
-    <label for="userId">ID del Usuario</label>
-    <input v-model="userId" type="text" placeholder="User ID" required />
-  </div>
-
   <button type="submit">Guardar tarea editada</button>
 </form>
 

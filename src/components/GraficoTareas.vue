@@ -74,7 +74,7 @@ const chartOptions = {
 }
 </script>
 
-<template>
+<!-- <template>
   <div>
     <h2>📊 Tareas asignadas por usuario</h2>
     <Bar v-if="usuarios.length" :data="chartDataTareas" :options="chartOptions" />
@@ -87,5 +87,46 @@ const chartOptions = {
 <style scoped>
 h2 {
   margin: 1rem 0;
+}
+</style> -->
+<template>
+  <div class="grafico-container">
+    <h2>📊 Tareas asignadas por usuario</h2>
+    <div class="grafico">
+      <Bar v-if="usuarios.length" :data="chartDataTareas" :options="chartOptions" />
+    </div>
+
+    <h2>📊 Tareas completadas por usuario</h2>
+    <div class="grafico">
+      <Bar v-if="usuarios.length" :data="chartDataCompletadas" :options="chartOptions" />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.grafico-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.grafico {
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  padding: 1rem;
+}
+
+canvas {
+  max-height: 400px !important;
+  width: 100% !important;
+}
+
+h2 {
+  margin: 1.5rem 0 1rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 </style>

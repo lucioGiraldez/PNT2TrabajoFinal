@@ -38,7 +38,6 @@ const agregarUsuario = async () => {
         <label for="email">Email</label>
         <input v-model="email" type="email" placeholder="Email" required />
       </div>
-
       <button type="submit">Agregar Usuario</button>
     </form>
   </main>

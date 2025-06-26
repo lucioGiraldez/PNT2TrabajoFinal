@@ -64,7 +64,7 @@ const editarUsuario = (id) => {
   <main class="task-container">
     <h2>Usuarios registrados</h2>
     <button class="button modern" @click="irANuevaVistaUsuario">➕ Agregar Usuario</button>
-
+    <div class="divider"></div>
     <div v-if="cargando">⏳ Cargando Usuarios...</div>
     <p v-else-if="error" class="error">{{ error }}</p>
 
@@ -159,5 +159,11 @@ h2 {
 body.dark .task-card {
   background-color: #1f2937;
   color: #f9fafb;
+}
+.divider {
+  margin: 2rem 0;          /* Espaciado arriba y abajo */
+  height: 1px;             /* Grosor de la línea */
+  background-color: #ccc;  /* Color gris claro */
+  width: 100%;
 }
 </style>
