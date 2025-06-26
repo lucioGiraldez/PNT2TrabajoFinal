@@ -80,22 +80,22 @@ const toggleCompletada = async (tarea) => {
     <p v-else-if="error" class="error">{{ error }}</p>
 
     <div v-else-if="tareas.length" class="task-list">
-      <div v-for="t in tareas" :key="t.id" class="task-card">
-        <h3>{{ t.titulo }}</h3>
+      <div v-for="cadaTarea in tareas" :key="cadaTarea.id" class="task-card">
+        <h3>{{ cadaTarea.titulo }}</h3>
 <div class="completada">
   <span class="estado-label">Estado:</span>
   <button
     class="estado-btn"
-    :class="t.completada ? 'completa' : 'pendiente'"
-    @click="toggleCompletada(t)"
+    :class="cadaTarea.completada ? 'completa' : 'pendiente'"
+    @click="toggleCompletada(cadaTarea)"
   >
-    {{ t.completada ? 'Completada' : 'Pendiente' }}
+    {{ cadaTarea.completada ? 'Completada' : 'Pendiente' }}
   </button>
 </div>
-        <p>👤 Usuario: {{ t.userId }}</p>
+        <p>👤 Usuario: {{ cadaTarea.userId }}</p>
         <div class="actions">
-          <button class="button danger" @click="eliminarTarea(t.id, t.titulo)">Eliminar</button>
-          <button class="button secondary" @click="editarTarea(t.id)">Editar</button>
+          <button class="button danger" @click="eliminarTarea(cadaTarea.id, cadaTarea.titulo)">Eliminar</button>
+          <button class="button secondary" @click="editarTarea(cadaTarea.id)">Editar</button>
         </div>
       </div>
     </div>

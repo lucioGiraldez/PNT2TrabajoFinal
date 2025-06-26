@@ -21,6 +21,10 @@ const routes = [
    name: 'userAdministration', 
    component: () => import('../views/NewUserView.vue')
    },
+   { path: '/editUser/:id',
+   name: 'editUser', 
+   component: () => import('../views/EditUserView.vue')
+   }
 ]
 
 const router = createRouter({

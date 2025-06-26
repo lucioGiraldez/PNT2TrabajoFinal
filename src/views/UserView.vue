@@ -1,26 +1,36 @@
 <script setup>
 import axios from 'axios'
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
+const MOCKAPI_USERS = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
+const MOCKAPI_TASKS = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 
 const usuarios = ref([])
-const nuevoUsuario = ref("")
+const tareas = ref([])
 const cargando = ref(false)
 const error = ref("")
-const dashboardRef = inject('dashboardRef')
 
-
-const mostrarUsuarios = async () => {
+const mostrarUsuariosYTareas = async () => {
   cargando.value = true
   try {
-    const res = await axios.get(MOCKAPI)
-    usuarios.value = res.data
+    const [resUsuarios, resTareas] = await Promise.all([
+      axios.get(MOCKAPI_USERS),
+      axios.get(MOCKAPI_TASKS)
+    ])
+    usuarios.value = resUsuarios.data.map(usuario => {
+      const tareasDelUsuario = resTareas.data.filter(t => t.userId == usuario.id)
+      const completadas = tareasDelUsuario.filter(t => t.completada).length
+      return {
+        ...usuario,
+        cantTareas: tareasDelUsuario.length,
+        cantCompletadas: completadas
+      }
+    })
   } catch (err) {
-    error.value = 'Error al cargar usuarios.'
+    error.value = 'Error al cargar usuarios y tareas.'
     console.error(err)
   } finally {
     cargando.value = false
@@ -28,85 +38,51 @@ const mostrarUsuarios = async () => {
 }
 
 onMounted(async () => {
-  await mostrarUsuarios()
+  await mostrarUsuariosYTareas()
 })
 
 const irANuevaVistaUsuario = () => {
-  router.push('/newUser') // o { name: 'newUserView' }
+  router.push('/newUser')
 }
 
-const agregarUsuario = async () => {
-  if (nuevoUsuario.value.trim() === '') return
+const eliminarUsuario = async (id, nombre) => {
+  if (!confirm(`❌¿Eliminar a "${nombre}"?`)) return
   try {
-    await axios.post(MOCKAPI, {
-      titulo: nuevoUsuario.value,
-      completada: false,
-      userId: Math.floor(Math.random() * 100) + 1
-    })
-    nuevoUsuario.value = ''
-    await mostrarUsuarios()
-  } catch (err) {
-    console.error('Error al agregar usuario', err)
-  }
-}
-
-const eliminarUsuario = async (id, titulo) => {
-  if (!confirm(`❌¿Eliminar a "${titulo}"?`)) return
-  try {
-    await axios.delete(`${MOCKAPI}/${id}`)
-    await mostrarUsuarios()
+    await axios.delete(`${MOCKAPI_USERS}/${id}`)
+    await mostrarUsuariosYTareas()
   } catch (err) {
     console.error('Error al eliminar usuario', err)
   }
 }
 
 const editarUsuario = (id) => {
-  router.push(`/editTask/${id}`)
-}
-
-const toggleCompletada = async (tarea) => {
-  try {
-    await axios.put(`${MOCKAPI}/${tarea.id}`, {
-      titulo: tarea.titulo,
-      completada: !tarea.completada,
-      userId: tarea.userId
-    })
-    await mostrarUsuarios()
-  } catch (err) {
-    console.error('Error al actualizar usuario', err)
-  }
+  router.push(`/editUser/${id}`)
 }
 </script>
 
 <template>
   <main class="task-container">
-    <h2>Lista de tareas por usuario:</h2>
-  <button @click="irANuevaVistaUsuario">Agregar usuario</button>
+    <h2>Usuarios registrados</h2>
+    <button class="button modern" @click="irANuevaVistaUsuario">➕ Agregar Usuario</button>
+
     <div v-if="cargando">⏳ Cargando Usuarios...</div>
     <p v-else-if="error" class="error">{{ error }}</p>
 
     <div v-else-if="usuarios.length" class="task-list">
-      <div v-for="t in usuarios" :key="t.id" class="task-card">
-        <h3>{{ t.titulo }}</h3>
-<div class="completada">
-  <span class="estado-label">Estado:</span>
-  <button
-    class="estado-btn"
-    :class="t.completada ? 'completa' : 'pendiente'"
-    @click="toggleCompletada(t)"
-  >
-    {{ t.completada ? 'Completada' : 'Pendiente' }}
-  </button>
-</div>
-        <p>👤 Usuario: {{ t.userId }}</p>
+      <div v-for="u in usuarios" :key="u.id" class="task-card">
+        <h3>👤 {{ u.nombre }}</h3>
+        <p>ID: {{ u.id }}</p>
+        <p>📧 Email: {{ u.email }}</p>
+        <p>📋 Tareas: {{ u.cantTareas }}</p>
+        <p>✅ Completadas: {{ u.cantCompletadas }}</p>
         <div class="actions">
-          <button class="button danger" @click="eliminarUsuario(t.id, t.titulo)">Eliminar</button>
-          <button class="button secondary" @click="editarUsuario(t.id)">Editar</button>
+          <button class="button danger" @click="eliminarUsuario(u.id, u.nombre)">Eliminar</button>
+          <button class="button secondary" @click="editarUsuario(u.id)">Editar</button>
         </div>
       </div>
     </div>
 
-    <p v-else>📝 No hay usuarios cargads.</p>
+    <p v-else>📝 No hay usuarios cargados.</p>
   </main>
 </template>
 
@@ -117,21 +93,6 @@ const toggleCompletada = async (tarea) => {
 
 h2 {
   margin-bottom: 1.5rem;
-}
-
-.add-task {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-
-input {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
 }
 
 .button {
@@ -155,6 +116,14 @@ input {
 
 .button.danger {
   background-color: #ef4444;
+}
+
+.button.modern {
+  background-color: #3b82f6;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .task-list {
@@ -187,64 +156,8 @@ input {
   font-weight: bold;
 }
 
-/* Dark mode compatible */
 body.dark .task-card {
   background-color: #1f2937;
   color: #f9fafb;
 }
-
-body.dark input {
-  background-color: #374151;
-  color: white;
-  border-color: #555;
-}
-.completada {
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.estado-label {
-  font-weight: 500;
-  font-size: 0.95rem;
-  color: #374151;
-}
-
-.estado-btn {
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 9999px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  color: white;
-  font-size: 0.9rem;
-}
-
-.estado-btn.completa {
-  background-color: #22c55e;
-}
-
-.estado-btn.pendiente {
-  background-color: #9ca3af;
-}
-
-/* Modo oscuro */
-body.dark .estado-label {
-  color: #d1d5db;
-}
-
-body.dark .estado-btn.completa {
-  background-color: #16a34a;
-}
-
-body.dark .estado-btn.pendiente {
-  background-color: #6b7280;
-}
-
-body.dark .completada input[type="checkbox"] {
-  accent-color: #22c55e;
-}
-
 </style>

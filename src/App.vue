@@ -59,9 +59,9 @@ watch(darkMode, (value) => {
     <nav class="navbar">
       
     <RouterLink
-    to="/main"
+    to="/"
     class="nav-button"
-    :class="{ active: route.path === '/main' }"
+    :class="{ active: route.path === '/' }"
   >Estadísticas</RouterLink>
 
   <RouterLink
@@ -75,6 +75,12 @@ watch(darkMode, (value) => {
     class="nav-button"
     :class="{ active: route.path === '/newTask' }"
   >Agregar Tarea</RouterLink>
+
+  <RouterLink
+    to="/users"
+    class="nav-button"
+    :class="{ active: route.path === '/users' }"
+  >Ver Usuarios</RouterLink>
 </nav>
 
     <main class="main-content">
@@ -82,8 +88,8 @@ watch(darkMode, (value) => {
     </main>
   </div>
 
-  <div v-if="route.path === '/main'">
-    <h2>📊 Estadísticas generales</h2>
+  <div v-if="route.path === '/' ">
+    <h2>📊 Estadísticas Generales</h2>
     <DashboardStats />
   </div>
 

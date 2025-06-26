@@ -1,51 +1,78 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
 
-const nombre = ref('')
-const email = ref('')
 const router = useRouter()
+const route = useRoute()
+const idUsuario = route.params.id
 
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 
-const agregarUsuario = async () => {
-  if (nombre.value.trim() === '' || email.value.trim() === '') return
+const nombre = ref('')
+const email = ref('')
+const cargando = ref(false)
+const error = ref('')
 
+const cargarUsuario = async () => {
+  cargando.value = true
   try {
-    await axios.post(MOCKAPI, {
+    const res = await axios.get(`${MOCKAPI}/${idUsuario}`)
+    nombre.value = res.data.nombre || ''
+    email.value = res.data.email || ''
+  } catch (err) {
+    error.value = 'Error al cargar el usuario.'
+    console.error(err)
+  } finally {
+    cargando.value = false
+  }
+}
+
+const guardarCambios = async () => {
+  const confirmar = confirm(`¿Guardar cambios de "${nombre.value}"?`)
+  if (!confirmar) return
+  try {
+    await axios.put(`${MOCKAPI}/${idUsuario}`, {
       nombre: nombre.value,
       email: email.value
     })
-    alert(`✅ Usuario agregado con éxito`)
+    alert('Usuario actualizado con éxito ✅')
     router.push('/users')
-  } catch (error) {
-    console.error('Error al agregar usuario', error)
+  } catch (err) {
+    console.error('Error al actualizar usuario', err)
   }
 }
+
+onMounted(() => {
+  cargarUsuario()
+})
 </script>
 
 <template>
-  <h1>Agregar Usuario</h1>
-  <main>
-    <form @submit.prevent="agregarUsuario">
+  <main class="form-container">
+    <h2>Editar Usuario</h2>
+
+    <div v-if="cargando">Cargando...</div>
+    <p v-else-if="error" class="error">{{ error }}</p>
+
+    <form v-else @submit.prevent="guardarCambios">
       <div>
         <label for="nombre">Nombre</label>
-        <input v-model="nombre" type="text" placeholder="Nombre" required />
+        <input id="nombre" v-model="nombre" type="text" placeholder="Nombre" required />
       </div>
 
       <div>
         <label for="email">Email</label>
-        <input v-model="email" type="email" placeholder="Email" required />
+        <input id="email" v-model="email" type="email" placeholder="Correo electrónico" required />
       </div>
 
-      <button type="submit">Agregar Usuario</button>
+      <button type="submit">Guardar cambios</button>
     </form>
   </main>
 </template>
 
 <style scoped>
-main {
+.form-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
@@ -54,7 +81,7 @@ main {
   box-shadow: var(--shadow, 0 2px 6px rgba(0, 0, 0, 0.1));
 }
 
-h1 {
+h2 {
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
@@ -102,7 +129,7 @@ button[type="submit"]:hover {
   background-color: var(--secondary-color, #2563eb);
 }
 
-body.dark main {
+body.dark .form-container {
   background-color: #1f2937;
   color: #f9fafb;
 }

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -7,53 +7,71 @@ const router = useRouter()
 const titulo = ref('')
 const completada = ref('')
 const userId = ref('')
+const usuarios = ref([])
 
-const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
+const USERS_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
+const TASKS_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
+
+const obtenerUsuarios = async () => {
+  try {
+    const res = await axios.get(USERS_API)
+    usuarios.value = res.data
+  } catch (err) {
+    console.error('Error al cargar usuarios', err)
+  }
+}
 
 const agregarTarea = async () => {
-  if (titulo.value.trim() === '') return
+  if (titulo.value.trim() === '' || userId.value.trim() === '') return
   try {
-    await axios.post(MOCKAPI, {
+    await axios.post(TASKS_API, {
       titulo: titulo.value,
       completada: completada.value === "true",
       userId: userId.value
     })
-    alert(`✅ Tarea ${titulo.value} agregada con éxito`)
+    alert(`✅ Tarea "${titulo.value}" agregada con éxito`)
     router.push('/task')
   } catch (error) {
     console.log('Error al agregar tarea', error)
   }
 }
 
+onMounted(() => {
+  obtenerUsuarios()
+})
 </script>
 
 <template>
-<H1>Agregar Tarea</H1>
-<main>
-<form @submit.prevent="agregarTarea">
-  <div>
-    <label for="titulo">Título</label>
-    <input v-model="titulo" type="text" placeholder="Título" required />
-  </div>
+  <h1>Agregar Tarea</h1>
+  <main>
+    <form @submit.prevent="agregarTarea">
+      <div>
+        <label for="titulo">Título</label>
+        <input v-model="titulo" type="text" placeholder="Título" required />
+      </div>
 
-<div>
-  <label for="completada">Completada</label>
-  <select v-model="completada" required>
-    <option value="">Seleccionar...</option>
-    <option value="true">Sí</option>
-    <option value="false">No</option>
-  </select>
-</div>
+      <div>
+        <label for="completada">Completada</label>
+        <select v-model="completada" required>
+          <option value="">Seleccionar...</option>
+          <option value="true">Sí</option>
+          <option value="false">No</option>
+        </select>
+      </div>
 
-  <div>
-    <label for="userId">ID del Usuario</label>
-    <input v-model="userId" type="text" placeholder="User ID" required />
-  </div>
+      <div>
+        <label for="userId">Asignar a Usuario</label>
+        <select v-model="userId" required>
+          <option value="">Seleccionar usuario...</option>
+          <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">
+            {{ usuario.nombre }} ({{ usuario.email }})
+          </option>
+        </select>
+      </div>
 
-  <button type="submit">Agregar</button>
-</form>
-
-</main>
+      <button type="submit">Agregar</button>
+    </form>
+  </main>
 </template>
 
 <style scoped>
