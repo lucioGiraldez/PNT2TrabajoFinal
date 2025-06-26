@@ -8,7 +8,7 @@ const titulo = ref('')
 const completada = ref('')
 const userId = ref('')
 
-const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
+const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 
 const agregarTarea = async () => {
   if (titulo.value.trim() === '') return
@@ -28,7 +28,7 @@ const agregarTarea = async () => {
 </script>
 
 <template>
-<H1>Agregar Tarea</H1>
+<H1>Agregar Usuario</H1>
 <main>
 <form @submit.prevent="agregarTarea">
   <div>

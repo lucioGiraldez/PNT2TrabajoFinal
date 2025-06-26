@@ -13,6 +13,14 @@ const routes = [
    name: 'editTask', 
    component: () => import('../views/EditTaskView.vue')
    },
+  { path: '/users',
+   name: 'userView', 
+   component: () => import('../views/UserView.vue')
+   },   
+  { path: '/newUser',
+   name: 'userAdministration', 
+   component: () => import('../views/NewUserView.vue')
+   },
 ]
 
 const router = createRouter({

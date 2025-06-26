@@ -5,21 +5,22 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
+const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 
-const tareas = ref([])
-const nuevaTarea = ref("")
+const usuarios = ref([])
+const nuevoUsuario = ref("")
 const cargando = ref(false)
 const error = ref("")
+const dashboardRef = inject('dashboardRef')
 
 
-const mostrarTareas = async () => {
+const mostrarUsuarios = async () => {
   cargando.value = true
   try {
     const res = await axios.get(MOCKAPI)
-    tareas.value = res.data
+    usuarios.value = res.data
   } catch (err) {
-    error.value = 'Error al cargar tareas.'
+    error.value = 'Error al cargar usuarios.'
     console.error(err)
   } finally {
     cargando.value = false
@@ -27,35 +28,39 @@ const mostrarTareas = async () => {
 }
 
 onMounted(async () => {
-  await mostrarTareas()
+  await mostrarUsuarios()
 })
 
-const agregarTarea = async () => {
-  if (nuevaTarea.value.trim() === '') return
+const irANuevaVistaUsuario = () => {
+  router.push('/newUser') // o { name: 'newUserView' }
+}
+
+const agregarUsuario = async () => {
+  if (nuevoUsuario.value.trim() === '') return
   try {
     await axios.post(MOCKAPI, {
-      titulo: nuevaTarea.value,
+      titulo: nuevoUsuario.value,
       completada: false,
       userId: Math.floor(Math.random() * 100) + 1
     })
-    nuevaTarea.value = ''
-    await mostrarTareas()
+    nuevoUsuario.value = ''
+    await mostrarUsuarios()
   } catch (err) {
-    console.error('Error al agregar tarea', err)
+    console.error('Error al agregar usuario', err)
   }
 }
 
-const eliminarTarea = async (id, titulo) => {
-  if (!confirm(`❌¿Eliminar "${titulo}"?`)) return
+const eliminarUsuario = async (id, titulo) => {
+  if (!confirm(`❌¿Eliminar a "${titulo}"?`)) return
   try {
     await axios.delete(`${MOCKAPI}/${id}`)
-    await mostrarTareas()
+    await mostrarUsuarios()
   } catch (err) {
-    console.error('Error al eliminar tarea', err)
+    console.error('Error al eliminar usuario', err)
   }
 }
 
-const editarTarea = (id) => {
+const editarUsuario = (id) => {
   router.push(`/editTask/${id}`)
 }
 
@@ -66,21 +71,22 @@ const toggleCompletada = async (tarea) => {
       completada: !tarea.completada,
       userId: tarea.userId
     })
-    await mostrarTareas()
+    await mostrarUsuarios()
   } catch (err) {
-    console.error('Error al actualizar tarea', err)
+    console.error('Error al actualizar usuario', err)
   }
 }
 </script>
 
 <template>
   <main class="task-container">
-    <h2>Tu lista de tareas:</h2>
-    <div v-if="cargando">⏳ Cargando tareas...</div>
+    <h2>Lista de tareas por usuario:</h2>
+  <button @click="irANuevaVistaUsuario">Agregar usuario</button>
+    <div v-if="cargando">⏳ Cargando Usuarios...</div>
     <p v-else-if="error" class="error">{{ error }}</p>
 
-    <div v-else-if="tareas.length" class="task-list">
-      <div v-for="t in tareas" :key="t.id" class="task-card">
+    <div v-else-if="usuarios.length" class="task-list">
+      <div v-for="t in usuarios" :key="t.id" class="task-card">
         <h3>{{ t.titulo }}</h3>
 <div class="completada">
   <span class="estado-label">Estado:</span>
@@ -94,13 +100,13 @@ const toggleCompletada = async (tarea) => {
 </div>
         <p>👤 Usuario: {{ t.userId }}</p>
         <div class="actions">
-          <button class="button danger" @click="eliminarTarea(t.id, t.titulo)">Eliminar</button>
-          <button class="button secondary" @click="editarTarea(t.id)">Editar</button>
+          <button class="button danger" @click="eliminarUsuario(t.id, t.titulo)">Eliminar</button>
+          <button class="button secondary" @click="editarUsuario(t.id)">Editar</button>
         </div>
       </div>
     </div>
 
-    <p v-else>📝 No hay tareas cargadas.</p>
+    <p v-else>📝 No hay usuarios cargads.</p>
   </main>
 </template>
 
