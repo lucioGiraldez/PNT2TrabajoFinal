@@ -8,6 +8,8 @@ const titulo = ref('')
 const completada = ref('')
 const userId = ref('')
 const usuarios = ref([])
+const deadline = ref('')
+
 
 const USERS_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 const TASKS_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
@@ -27,7 +29,8 @@ const agregarTarea = async () => {
     await axios.post(TASKS_API, {
       titulo: titulo.value,
       completada: completada.value === "true",
-      userId: userId.value
+      userId: userId.value,
+      deadline: deadline.value
     })
     alert(`✅ Tarea "${titulo.value}" agregada con éxito`)
     router.push('/task')
@@ -67,6 +70,16 @@ onMounted(() => {
             {{ usuario.nombre }} ({{ usuario.email }})
           </option>
         </select>
+      </div>
+
+      <div>
+        <label for="deadline">Fecha límite</label>
+        <input
+          v-model="deadline"
+          type="date"
+          required
+          onkeydown="return false" 
+        />
       </div>
 
       <button type="submit">Agregar</button>

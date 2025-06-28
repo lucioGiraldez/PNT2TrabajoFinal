@@ -70,7 +70,7 @@ const editarUsuario = (id) => {
 
     <div v-else-if="usuarios.length" class="task-list">
       <div v-for="u in usuarios" :key="u.id" class="task-card">
-        <h3>👤 {{ u.nombre }}</h3>
+        <h3>👨‍🎓 {{ u.nombre }}</h3>
         <p>ID: {{ u.id }}</p>
         <p>📧 Email: {{ u.email }}</p>
         <p>📋 Tareas: {{ u.cantTareas }}</p>

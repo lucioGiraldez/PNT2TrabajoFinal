@@ -5,12 +5,16 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
+const USERAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 
 const tareas = ref([])
 const nuevaTarea = ref("")
 const cargando = ref(false)
 const error = ref("")
+const usuarios = ref([])
+
 
 
 const mostrarTareas = async () => {
@@ -26,8 +30,18 @@ const mostrarTareas = async () => {
   }
 }
 
+const obtenerUsuarios = async () => {
+  try {
+    const res = await axios.get(USERAPI)
+    usuarios.value = res.data
+  } catch (err) {
+    console.error('Error al cargar usuarios', err)
+  }
+}
+
 onMounted(async () => {
   await mostrarTareas()
+  await obtenerUsuarios()
 })
 
 const agregarTarea = async () => {
@@ -75,6 +89,18 @@ const toggleCompletada = async (tarea) => {
 const irANuevaVistaTarea = () => {
   router.push('/newTask')
 }
+
+const formatFecha = (fechaStr) => {
+  if (!fechaStr) return 'No asignada'
+  const [year, month, day] = fechaStr.split('-')
+  return `${day}/${month}/${year}`
+}
+
+const getUserNameById = (id) => {
+  const user = usuarios.value.find(u => u.id == id)
+  return user ? user.nombre : 'Usuario desconocido'
+}
+
 </script>
 
 <template>
@@ -89,6 +115,9 @@ const irANuevaVistaTarea = () => {
     <div v-else-if="tareas.length" class="task-list">
       <div v-for="cadaTarea in tareas" :key="cadaTarea.id" class="task-card">
         <h3>{{ cadaTarea.titulo }}</h3>
+        <div> 
+          <p>📅 Fecha límite: {{ formatFecha(cadaTarea.deadline) }}</p>
+        </div>
 <div class="completada">
   <span class="estado-label">Estado:</span>
   <button
@@ -99,7 +128,8 @@ const irANuevaVistaTarea = () => {
     {{ cadaTarea.completada ? 'Completada' : 'Pendiente' }}
   </button>
 </div>
-        <p>👤 Usuario: {{ cadaTarea.userId }}</p>
+        <p>📌 ID: {{ cadaTarea.userId }}</p>
+        <p>👨‍🎓 Usuario: {{ getUserNameById(cadaTarea.userId) }}</p>
         <div class="actions">
           <button class="button danger" @click="eliminarTarea(cadaTarea.id, cadaTarea.titulo)">Eliminar</button>
           <button class="button secondary" @click="editarTarea(cadaTarea.id)">Editar</button>
@@ -261,6 +291,10 @@ body.dark .completada input[type="checkbox"] {
   border-radius: 9999px;
   font-size: 1rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.task-card p {
+  margin: 0.2rem 0;
 }
 
 </style>

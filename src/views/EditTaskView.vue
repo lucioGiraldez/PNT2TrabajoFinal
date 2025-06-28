@@ -10,13 +10,16 @@ const route = useRoute()
 const titulo = ref('')
 const completada = ref('')
 const userId = ref('')
+const deadline = ref('')
+
 
 const taskId = route.params.id
 
 const taskToEdit = ref({
     titulo:"",
     completada:"",
-    userId:""
+    userId:"",
+    deadline:""
 })
 
 const cargarTareaAEditar = async () => {
@@ -29,6 +32,8 @@ const cargarTareaAEditar = async () => {
         titulo.value = taskToEdit.value.titulo
         completada.value = taskToEdit.value.completada
         userId.value = taskToEdit.value.userId
+        deadline.value = new Date(taskToEdit.value.deadline).toISOString().split('T')[0]
+
 
         console.log("Tarea Cargada: ", taskToEdit);
         
@@ -45,7 +50,8 @@ const editarTarea = async () => {
       const tareaActualizada = {
         titulo: titulo.value,
         completada: completada.value === "true",
-        userId: taskToEdit.value.userId // se mantiene sin modificar
+        userId: taskToEdit.value.userId,
+        deadline: deadline.value
       }
 
       await axios.put(`${MOCKAPI}/${taskToEdit.value.id}`, tareaActualizada)
@@ -80,6 +86,17 @@ onMounted(()=>{
     <option value="false">No</option>
   </select>
 </div>
+
+<div>
+  <label for="deadline">Fecha límite</label>
+  <input
+    v-model="deadline"
+    type="date"
+    required
+    onkeydown="return false"
+  />
+</div>
+
   <button type="submit">Guardar tarea editada</button>
 </form>
 

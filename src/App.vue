@@ -70,11 +70,6 @@ watch(darkMode, (value) => {
     :class="{ active: route.path === '/task' }"
   >Ver Tareas</RouterLink>
 
-  <!-- <RouterLink
-    to="/newTask"
-    class="nav-button"
-    :class="{ active: route.path === '/newTask' }"
-  >Agregar Tarea</RouterLink> -->
 
   <RouterLink
     to="/users"
@@ -221,6 +216,11 @@ body.dark .stat-card {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+body.dark .nav-button.active {
+  background-color: #22c55e;
+  color: #fff;
 }
 
 </style>
