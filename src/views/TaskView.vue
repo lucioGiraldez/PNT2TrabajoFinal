@@ -91,14 +91,18 @@ const irANuevaVistaTarea = () => {
 }
 
 const formatFecha = (fechaStr) => {
-  if (!fechaStr) return 'No asignada'
-  const [year, month, day] = fechaStr.split('-')
-  return `${day}/${month}/${year}`
+  if (!fechaStr) return 'No disponible'
+  const [anio, mes, dia] = fechaStr.slice(0, 10).split('-')
+  return `${dia}/${mes}/${anio}`
 }
 
 const getUserNameById = (id) => {
   const user = usuarios.value.find(u => u.id == id)
   return user ? user.nombre : 'Usuario desconocido'
+}
+
+const verDetalleTarea = (id) => {
+  router.push(`/taskDetail/${id}`)
 }
 
 </script>
@@ -128,9 +132,10 @@ const getUserNameById = (id) => {
     {{ cadaTarea.completada ? 'Completada' : 'Pendiente' }}
   </button>
 </div>
-        <p>📌 ID: {{ cadaTarea.userId }}</p>
+        <p>📌 ID Usuario: {{ cadaTarea.userId }}</p>
         <p>👨‍🎓 Usuario: {{ getUserNameById(cadaTarea.userId) }}</p>
         <div class="actions">
+          <button class="button info" @click="verDetalleTarea(cadaTarea.id)">Vista Detallada</button>
           <button class="button danger" @click="eliminarTarea(cadaTarea.id, cadaTarea.titulo)">Eliminar</button>
           <button class="button secondary" @click="editarTarea(cadaTarea.id)">Editar</button>
         </div>
@@ -208,7 +213,7 @@ input {
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 0.5rem;
   margin-top: 1rem;
 }
@@ -258,7 +263,7 @@ body.dark input {
 }
 
 .estado-btn.pendiente {
-  background-color: #9ca3af;
+  background-color: #f59e0b; /* mismo color que UserDetailView */
 }
 
 /* Modo oscuro */
@@ -271,7 +276,7 @@ body.dark .estado-btn.completa {
 }
 
 body.dark .estado-btn.pendiente {
-  background-color: #6b7280;
+  background-color: #f59e0b;
 }
 
 body.dark .completada input[type="checkbox"] {

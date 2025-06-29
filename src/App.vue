@@ -1,9 +1,13 @@
 <script setup>
-import { ref, onMounted, watch, provide } from 'vue'
+import { ref, onMounted, watch, provide, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
-import { useRoute } from 'vue-router'
 import DashboardStats from './components/DashboardStats.vue'
 import GraficoTareas from './components/GraficoTareas.vue'
+import { useUserStore } from '@/stores/user'
+
+const store = useUserStore()
+const isLoggedIn = computed(() => store.isLoggedIn)
 
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 const darkMode = ref(false)
@@ -11,15 +15,14 @@ const total = ref(0)
 const completadas = ref(0)
 const pendientes = ref(0)
 const route = useRoute()
+const router = useRouter()
 const dashboardRef = ref()
 provide('dashboardRef', dashboardRef)
-
 
 const cargarEstadisticas = async () => {
   try {
     const res = await axios.get(MOCKAPI)
     const tareas = res.data
-
     total.value = tareas.length
     completadas.value = tareas.filter(t => t.completada).length
     pendientes.value = tareas.filter(t => !t.completada).length
@@ -28,10 +31,14 @@ const cargarEstadisticas = async () => {
   }
 }
 
-
 const toggleDarkMode = () => {
   darkMode.value = !darkMode.value
   document.body.classList.toggle('dark', darkMode.value)
+}
+
+const logout = () => {
+  store.logout()
+  router.push('/login')
 }
 
 onMounted(() => {
@@ -48,51 +55,91 @@ watch(darkMode, (value) => {
 </script>
 
 <template>
-  <div class="app-container">
-    <header class="header">
-      <h1 class="app-title">📋 Administrador de Tareas</h1>
-      <button class="toggle-button" @click="toggleDarkMode">
-        {{ darkMode ? '☀️ Claro' : '🌙 Oscuro' }}
-      </button>
-    </header>
+  <div v-if="isLoggedIn">
+    <div class="header-bar">
+      <div class="top-controls">
+        <!-- IZQUIERDA -->
+        <span class="login-alert">
+          🔐 Estás logueado como: <strong>{{ store.user.email }}</strong>
+        </span>
 
-    <nav class="navbar">
-      
-    <RouterLink
-    to="/"
-    class="nav-button"
-    :class="{ active: route.path === '/' }"
-  >Estadísticas</RouterLink>
+        <!-- DERECHA -->
+        <div class="top-buttons">
+          <button class="toggle-button" @click="toggleDarkMode">
+            {{ darkMode ? '☀️ Claro' : '🌙 Oscuro' }}
+          </button>
+          <button class="toggle-button danger" @click="logout">
+            🔓 Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
 
-  <RouterLink
-    to="/task"
-    class="nav-button"
-    :class="{ active: route.path === '/task' }"
-  >Ver Tareas</RouterLink>
+    <div class="app-container">
+      <h1 class="main-title">📋 Administrador de Tareas</h1>
 
+      <nav class="navbar">
+        <RouterLink to="/" class="nav-button" :class="{ active: route.path === '/' }">Inicio</RouterLink>
+        <RouterLink to="/task" class="nav-button" :class="{ active: route.path === '/task' }">Ver Tareas</RouterLink>
+        <RouterLink to="/users" class="nav-button" :class="{ active: route.path === '/users' }">Ver Usuarios</RouterLink>
+      </nav>
 
-  <RouterLink
-    to="/users"
-    class="nav-button"
-    :class="{ active: route.path === '/users' }"
-  >Ver Usuarios</RouterLink>
-</nav>
+      <main class="main-content">
+        <RouterView />
+      </main>
 
-    <main class="main-content">
-      <RouterView />
-    </main>
+      <div v-if="route.path === '/'">
+        <h2>📊 Estadísticas Generales</h2>
+        <DashboardStats />
+        <GraficoTareas />
+      </div>
+    </div>
   </div>
 
-  <div v-if="route.path === '/' ">
-    <h2>📊 Estadísticas Generales</h2>
-    <DashboardStats />
-    <GraficoTareas />
-
+  <div v-else>
+    <RouterView />
   </div>
-
 </template>
 
 <style>
+.header-bar {
+  width: 100%;
+  background-color: #f3f4f6;
+  padding: 0.8rem 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+body.dark .header-bar {
+  background-color: #1f2937;
+}
+
+.top-controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.login-alert {
+  font-size: 0.95rem;
+  color: #16a34a;
+}
+
+body.dark .login-alert {
+  color: #4ade80;
+}
+
+.top-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* 🟩 Contenedor central */
 .app-container {
   max-width: 900px;
   margin: 0 auto;
@@ -100,33 +147,15 @@ watch(darkMode, (value) => {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.app-title {
-  font-size: 2rem;
+/* Título principal */
+.main-title {
+  text-align: center;
+  font-size: 2.8rem;
   font-weight: bold;
+  margin: 2rem 0;
 }
 
-.toggle-button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-weight: bold;
-}
-
-.toggle-button:hover {
-  background-color: var(--secondary-color);
-}
-
+/* Navegación */
 .navbar {
   display: flex;
   gap: 1rem;
@@ -153,34 +182,34 @@ watch(darkMode, (value) => {
 }
 
 .nav-button.active {
-  background-color: #22c55e; /* mismo verde que usabas */
+  background-color: #22c55e;
   color: #fff;
 }
 
-
-/* Modo oscuro */
-body.dark {
-  background-color: #111827;
-  color: #f9fafb;
+/* Botones comunes */
+.toggle-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: bold;
 }
 
-body.dark .toggle-button {
-  background-color: #374151;
+.toggle-button:hover {
+  background-color: var(--secondary-color);
 }
 
-body.dark .toggle-button:hover {
-  background-color: #4b5563;
+.toggle-button.danger {
+  background-color: #ef4444;
+}
+.toggle-button.danger:hover {
+  background-color: #dc2626;
 }
 
-body.dark .nav-button {
-  background-color: #374151;
-  color: #f9fafb;
-}
-
-body.dark .nav-button:hover {
-  background-color: #4b5563;
-}
-
+/* Dashboard y estadísticas */
 .dashboard {
   display: flex;
   gap: 1.5rem;
@@ -199,10 +228,7 @@ body.dark .nav-button:hover {
   text-align: center;
 }
 
-body.dark .stat-card {
-  background-color: #1f2937;
-}
-
+/* Fade efecto */
 .main-content {
   animation: fadeIn 0.6s ease-in-out;
 }
@@ -218,9 +244,34 @@ body.dark .stat-card {
   }
 }
 
-body.dark .nav-button.active {
-  background-color: #22c55e;
-  color: #fff;
+/* 🌑 Modo oscuro */
+body.dark {
+  background-color: #111827;
+  color: #f9fafb;
 }
 
+body.dark .stat-card {
+  background-color: #1f2937;
+}
+
+body.dark .nav-button {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+body.dark .nav-button:hover {
+  background-color: #4b5563;
+}
+
+body.dark .nav-button.active {
+  background-color: #22c55e;
+}
+
+body.dark .toggle-button {
+  background-color: #374151;
+}
+
+body.dark .toggle-button:hover {
+  background-color: #4b5563;
+}
 </style>

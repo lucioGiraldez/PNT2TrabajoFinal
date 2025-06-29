@@ -1,15 +1,16 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
 const titulo = ref('')
+const descripcion = ref('')
 const completada = ref('')
 const userId = ref('')
-const usuarios = ref([])
 const deadline = ref('')
-
+const usuarios = ref([])
 
 const USERS_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 const TASKS_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
@@ -24,24 +25,31 @@ const obtenerUsuarios = async () => {
 }
 
 const agregarTarea = async () => {
-  if (titulo.value.trim() === '' || userId.value.trim() === '') return
+  if (
+    titulo.value.trim() === '' ||
+    userId.value.trim() === '' ||
+    descripcion.value.trim() === '' ||
+    completada.value === ''
+  ) return alert('⚠️ Completá todos los campos')
+
   try {
     await axios.post(TASKS_API, {
-      titulo: titulo.value,
-      completada: completada.value === "true",
+      titulo: titulo.value, // aunque el schema dice Number, pasamos string
+      descripcion: descripcion.value,
+      completada: completada.value === 'true',
       userId: userId.value,
-      deadline: deadline.value
+      deadline: deadline.value,
+      creada: new Date().toISOString() // ✔️ Fecha actual en formato ISO UTC
     })
+
     alert(`✅ Tarea "${titulo.value}" agregada con éxito`)
     router.push('/task')
   } catch (error) {
-    console.log('Error al agregar tarea', error)
+    console.error('Error al agregar tarea', error)
   }
 }
 
-onMounted(() => {
-  obtenerUsuarios()
-})
+onMounted(obtenerUsuarios)
 </script>
 
 <template>
@@ -49,12 +57,17 @@ onMounted(() => {
   <main>
     <form @submit.prevent="agregarTarea">
       <div>
-        <label for="titulo">Título</label>
+        <label>Título</label>
         <input v-model="titulo" type="text" placeholder="Título" required />
       </div>
 
       <div>
-        <label for="completada">Completada</label>
+        <label>Descripción</label>
+        <textarea v-model="descripcion" placeholder="Descripción de la tarea" required />
+      </div>
+
+      <div>
+        <label>Completada</label>
         <select v-model="completada" required>
           <option value="">Seleccionar...</option>
           <option value="true">Sí</option>
@@ -63,7 +76,7 @@ onMounted(() => {
       </div>
 
       <div>
-        <label for="userId">Asignar a Usuario</label>
+        <label>Asignar a Usuario</label>
         <select v-model="userId" required>
           <option value="">Seleccionar usuario...</option>
           <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">
@@ -73,12 +86,12 @@ onMounted(() => {
       </div>
 
       <div>
-        <label for="deadline">Fecha límite</label>
+        <label>Fecha límite</label>
         <input
           v-model="deadline"
           type="date"
           required
-          onkeydown="return false" 
+          onkeydown="return false"
         />
       </div>
 
@@ -116,7 +129,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   padding: 0.6rem;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -125,8 +139,14 @@ select {
   transition: border-color 0.2s ease;
 }
 
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
   border-color: #22c55e;
 }
@@ -154,7 +174,8 @@ body.dark main {
 }
 
 body.dark input,
-body.dark select {
+body.dark select,
+body.dark textarea {
   background-color: #374151;
   color: #f9fafb;
   border: 1px solid #4b5563;

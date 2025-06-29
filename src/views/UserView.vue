@@ -58,6 +58,11 @@ const eliminarUsuario = async (id, nombre) => {
 const editarUsuario = (id) => {
   router.push(`/editUser/${id}`)
 }
+
+const verDetalleUsuario = (id) => {
+  router.push(`/userDetail/${id}`)
+}
+
 </script>
 
 <template>
@@ -76,6 +81,7 @@ const editarUsuario = (id) => {
         <p>📋 Tareas: {{ u.cantTareas }}</p>
         <p>✅ Completadas: {{ u.cantCompletadas }}</p>
         <div class="actions">
+          <button class="button info" @click="verDetalleUsuario(u.id)">Vista Detallada</button>
           <button class="button danger" @click="eliminarUsuario(u.id, u.nombre)">Eliminar</button>
           <button class="button secondary" @click="editarUsuario(u.id)">Editar</button>
         </div>
@@ -146,10 +152,11 @@ h2 {
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 0.5rem;
   margin-top: 1rem;
 }
+
 
 .error {
   color: red;

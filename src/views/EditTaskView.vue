@@ -5,51 +5,49 @@ import { useRoute, useRouter } from 'vue-router';
 
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 
-const router = useRouter() 
+const router = useRouter()
 const route = useRoute()
 const titulo = ref('')
+const descripcion = ref('')
 const completada = ref('')
 const userId = ref('')
 const deadline = ref('')
 
-
 const taskId = route.params.id
 
 const taskToEdit = ref({
-    titulo:"",
-    completada:"",
-    userId:"",
-    deadline:""
+  titulo: '',
+  descripcion: '',
+  completada: '',
+  userId: '',
+  deadline: ''
 })
 
 const cargarTareaAEditar = async () => {
-    
+  try {
+    const response = await axios.get(`${MOCKAPI}/${taskId}`)
+    taskToEdit.value = response.data
 
-    try {
-        const response = await axios.get(`${MOCKAPI}/${taskId}`)
-        taskToEdit.value = response.data
-        
-        titulo.value = taskToEdit.value.titulo
-        completada.value = taskToEdit.value.completada
-        userId.value = taskToEdit.value.userId
-        deadline.value = new Date(taskToEdit.value.deadline).toISOString().split('T')[0]
+    titulo.value = taskToEdit.value.titulo
+    descripcion.value = taskToEdit.value.descripcion
+    completada.value = taskToEdit.value.completada
+    userId.value = taskToEdit.value.userId
+    deadline.value = new Date(taskToEdit.value.deadline).toISOString().split('T')[0]
 
-
-        console.log("Tarea Cargada: ", taskToEdit);
-        
-    } catch (error) {
-        console.log("Error al cargar la tarea para editar");
-        
-    }
+    console.log('Tarea Cargada: ', taskToEdit)
+  } catch (error) {
+    console.error('Error al cargar la tarea para editar')
+  }
 }
 
 const editarTarea = async () => {
-    const confirmar = confirm(`¿Guardar cambios de "${titulo.value}"?`)
+  const confirmar = confirm(`¿Guardar cambios de "${titulo.value}"?`)
   if (confirmar) {
     try {
       const tareaActualizada = {
         titulo: titulo.value,
-        completada: completada.value === "true",
+        descripcion: descripcion.value,
+        completada: completada.value === 'true',
         userId: taskToEdit.value.userId,
         deadline: deadline.value
       }
@@ -63,44 +61,45 @@ const editarTarea = async () => {
   }
 }
 
-onMounted(()=>{
-    cargarTareaAEditar()
-})
-
+onMounted(cargarTareaAEditar)
 </script>
 
 <template>
-<H1>Editar Tarea</H1>
-<main>
-<form @submit.prevent="editarTarea">
-  <div>
-    <label for="titulo">Título</label>
-    <input v-model="titulo" type="text" placeholder="Título" required />
-  </div>
+  <h1>Editar Tarea</h1>
+  <main>
+    <form @submit.prevent="editarTarea">
+      <div>
+        <label for="titulo">Título</label>
+        <input v-model="titulo" type="text" placeholder="Título" required />
+      </div>
 
-<div>
-  <label for="completada">Completada</label>
-  <select v-model="completada" required>
-    <option value="">Seleccionar...</option>
-    <option value="true">Sí</option>
-    <option value="false">No</option>
-  </select>
-</div>
+      <div>
+        <label for="descripcion">Descripción</label>
+        <textarea v-model="descripcion" placeholder="Descripción de la tarea" required></textarea>
+      </div>
 
-<div>
-  <label for="deadline">Fecha límite</label>
-  <input
-    v-model="deadline"
-    type="date"
-    required
-    onkeydown="return false"
-  />
-</div>
+      <div>
+        <label for="completada">Completada</label>
+        <select v-model="completada" required>
+          <option value="">Seleccionar...</option>
+          <option value="true">Sí</option>
+          <option value="false">No</option>
+        </select>
+      </div>
 
-  <button type="submit">Guardar tarea editada</button>
-</form>
+      <div>
+        <label for="deadline">Fecha límite</label>
+        <input
+          v-model="deadline"
+          type="date"
+          required
+          onkeydown="return false"
+        />
+      </div>
 
-</main>
+      <button type="submit">Guardar tarea editada</button>
+    </form>
+  </main>
 </template>
 
 <style scoped>
@@ -132,7 +131,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   padding: 0.6rem;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -141,8 +141,14 @@ select {
   transition: border-color 0.2s ease;
 }
 
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
   border-color: #22c55e;
 }
@@ -163,14 +169,24 @@ button[type="submit"]:hover {
   background-color: var(--secondary-color, #2563eb);
 }
 
-/* Modo oscuro */
+
+body.dark button[type="submit"] {
+  background-color: #3b82f6;
+  color: white;
+}
+
+body.dark button[type="submit"]:hover {
+  background-color: #2563eb;
+}
+
 body.dark main {
   background-color: #1f2937;
   color: #f9fafb;
 }
 
 body.dark input,
-body.dark select {
+body.dark select,
+body.dark textarea {
   background-color: #374151;
   color: #f9fafb;
   border: 1px solid #4b5563;
