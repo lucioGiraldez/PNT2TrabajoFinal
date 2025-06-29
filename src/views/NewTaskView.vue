@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import emailjs from '@emailjs/browser'
 
 const router = useRouter()
 
@@ -33,7 +34,9 @@ const agregarTarea = async () => {
   ) return alert('⚠️ Completá todos los campos')
 
   try {
+    const usuario = usuarios.value.find(u => u.id === userId.value)
     await axios.post(TASKS_API, {
+      
       titulo: titulo.value, // aunque el schema dice Number, pasamos string
       descripcion: descripcion.value,
       completada: completada.value === 'true',
@@ -42,12 +45,52 @@ const agregarTarea = async () => {
       creada: new Date().toISOString() // ✔️ Fecha actual en formato ISO UTC
     })
 
+    const tareaParaEmail = {
+      titulo: titulo.value,
+      descripcion: descripcion.value,
+      deadline: deadline.value
+    }
+
+    await enviarEmail(usuario, tareaParaEmail)
+
     alert(`✅ Tarea "${titulo.value}" agregada con éxito`)
     router.push('/task')
   } catch (error) {
     console.error('Error al agregar tarea', error)
   }
 }
+
+const formatFecha = (fechaStr) => {
+  if (!fechaStr) return 'No disponible'
+  const [anio, mes, dia] = fechaStr.slice(0, 10).split('-')
+  return `${dia}/${mes}/${anio}`
+}
+
+const enviarEmail = (usuario, tarea) => {
+  const templateParams = {
+    to_name: usuario.nombre,
+    to_email: usuario.email,
+    task_title: tarea.titulo,
+    task_description: tarea.descripcion || 'No ingresada',
+    task_deadline: formatFecha(tarea.deadline)
+  }
+
+  emailjs.send(
+    'service_pfdfnbk',           
+    'template_d8v31ze',          
+    templateParams,
+    'E2DVeZ92a-5Pv2KmO'          
+  )
+  .then(() => {
+    alert('📧 ¡Email enviado correctamente al usuario!')
+  })
+  .catch((err) => {
+    alert('❌ Error al enviar el email. Revisá la consola para más detalles.')
+    console.error('❌ Error al enviar email:', err)
+  })
+}
+
+
 
 onMounted(obtenerUsuarios)
 </script>

@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
 const tarea = ref(null)
 const nombreUsuario = ref('')
 const idUsuario = ref('')
@@ -36,16 +37,32 @@ const formatFecha = (fechaStr) => {
     year: 'numeric'
   })
 }
+
+const verDetalleUsuario = () => {
+  if (idUsuario.value) {
+    router.push(`/userDetail/${idUsuario.value}`)
+  }
+}
+
+const volverAlMenu = () => {
+  router.push(`/task`)
+}
 </script>
 
 <template>
   <main v-if="tarea">
-    <h2>📝 Detalle de Tarea</h2>
+    <div class="header-bar">
+      <button class="volver-btn" @click="$router.push('/')">⬅ Volver al Menú</button>
+      <h2>📝 Detalle de Tarea</h2>
+    </div>
     <p><strong>ID Tarea:</strong> {{ tarea.id }}</p>
     <p><strong>Título:</strong> {{ tarea.titulo }}</p>
     <p><strong>Descripción:</strong> {{ tarea.descripcion || 'No ingresada' }}</p>
     <p><strong>ID Usuario asignado:</strong> {{ idUsuario }}</p>
-    <p><strong>Nombre Usuario asignado:</strong> {{ nombreUsuario }}</p>
+    <p>
+      <strong>Nombre Usuario asignado:</strong> {{ nombreUsuario }}
+      <button class="ver-btn" @click="verDetalleUsuario">Ver detalles de {{ nombreUsuario }}</button>
+    </p>
     <p><strong>Completada:</strong> {{ tarea.completada ? 'Sí' : 'No' }}</p>
     <p><strong>Fecha límite:</strong> {{ formatFecha(tarea.deadline) || 'No asignada' }}</p>
     <p><strong>Fecha de creación tarea:</strong> {{ formatFecha(tarea.creada) }}</p>
@@ -101,4 +118,63 @@ body.dark main {
 body.dark strong {
   color: #60a5fa;
 }
+
+.ver-btn {
+  margin-left: 1rem;
+  padding: 0.3rem 0.8rem;
+  background-color: #1eb8ff;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ver-btn:hover {
+  background-color: #1eb8ff;
+}
+
+body.dark .ver-btn {
+  background-color: #2563eb;
+}
+
+body.dark .ver-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.header-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.volver-btn {
+  position: absolute;
+  left: 0;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.volver-btn:hover {
+  background-color: #2563eb;
+}
+
+body.dark .volver-btn {
+  background-color: #2563eb;
+}
+
+body.dark .volver-btn:hover {
+  background-color: #1d4ed8;
+}
+
+
 </style>
