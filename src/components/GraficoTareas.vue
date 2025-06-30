@@ -91,12 +91,12 @@ h2 {
 </style> -->
 <template>
   <div class="grafico-container">
-    <h2>📊 Tareas asignadas por usuario</h2>
+    <h2>Tareas asignadas por usuario</h2>
     <div class="grafico">
       <Bar v-if="usuarios.length" :data="chartDataTareas" :options="chartOptions" />
     </div>
 
-    <h2>📊 Tareas completadas por usuario</h2>
+    <h2>Tareas completadas por usuario</h2>
     <div class="grafico">
       <Bar v-if="usuarios.length" :data="chartDataCompletadas" :options="chartOptions" />
     </div>

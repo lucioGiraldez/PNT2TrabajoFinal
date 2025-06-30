@@ -1,11 +1,9 @@
 <script setup>
 import axios from 'axios'
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
-
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 const USERAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
 
@@ -14,8 +12,6 @@ const nuevaTarea = ref("")
 const cargando = ref(false)
 const error = ref("")
 const usuarios = ref([])
-
-
 
 const mostrarTareas = async () => {
   cargando.value = true
@@ -104,13 +100,12 @@ const getUserNameById = (id) => {
 const verDetalleTarea = (id) => {
   router.push(`/taskDetail/${id}`)
 }
-
 </script>
 
 <template>
   <main class="task-container">
-    <h2>Tu lista de tareas:</h2>
-    <button class="button modern" @click="irANuevaVistaTarea">➕ Agregar Tarea</button>
+    <h2>Lista de tareas:</h2>
+    <button class="button modern" @click="irANuevaVistaTarea">+ Agregar Tarea</button>
 
     <div class="divider"></div>
     <div v-if="cargando">⏳ Cargando tareas...</div>
@@ -124,18 +119,16 @@ const verDetalleTarea = (id) => {
         </div>
 <div class="completada">
   <span class="estado-label">Estado:</span>
-  <button
-    class="estado-btn"
-    :class="cadaTarea.completada ? 'completa' : 'pendiente'"
-    @click="toggleCompletada(cadaTarea)"
-  >
-    {{ cadaTarea.completada ? 'Completada' : 'Pendiente' }}
-  </button>
+  <label class="switch">
+    <input type="checkbox" :checked="cadaTarea.completada" @change="toggleCompletada(cadaTarea)" />
+    <span class="slider"></span>
+  </label>
+  <span class="estado-text">{{ cadaTarea.completada ? 'Completada' : 'Pendiente' }}</span>
 </div>
         <p>📌 ID Usuario: {{ cadaTarea.userId }}</p>
         <p>👨‍🎓 Usuario: {{ getUserNameById(cadaTarea.userId) }}</p>
         <div class="actions">
-          <button class="button info" @click="verDetalleTarea(cadaTarea.id)">Vista Detallada</button>
+          <button class="button info" @click="verDetalleTarea(cadaTarea.id)">Detalles</button>
           <button class="button danger" @click="eliminarTarea(cadaTarea.id, cadaTarea.titulo)">Eliminar</button>
           <button class="button secondary" @click="editarTarea(cadaTarea.id)">Editar</button>
         </div>
@@ -149,66 +142,100 @@ const verDetalleTarea = (id) => {
 <style>
 .task-container {
   padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h2 {
   margin-bottom: 1.5rem;
-}
-
-.add-task {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-
-input {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
 }
 
 .button {
-  background-color: var(--primary-color);
+  background-color: #4f83cc;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s ease;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .button:hover {
-  background-color: var(--secondary-color);
+  background-color: #3d6db5;
+  transform: translateY(-1px);
 }
 
 .button.secondary {
-  background-color: #22c55e;
+  background-color: #4cad73;
+  color: white;
+}
+.button.secondary:hover {
+  background-color: #3c965f;
 }
 
 .button.danger {
-  background-color: #ef4444;
+  background-color: #e16060;
+  color: white;
+}
+.button.danger:hover {
+  background-color: #c84c4c;
+}
+
+.button.info {
+  background-color: #7b61ff;
+  color: white;
+}
+.button.info:hover {
+  background-color: #684de0;
+}
+
+.button.modern {
+  background-color: #888585;
+  padding: 0.7rem 1.4rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button.modern:hover {
+  background-color: #818080;
+  transform: translateY(-1px);
+}
+
+body.dark .button.modern {
+  background-color: #888585 !important;
+  color: white !important;
 }
 
 .task-list {
   display: grid;
-  gap: 1rem;
+  gap: 1.2rem;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
 .task-card {
-  background-color: var(--card-color, white);
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
-  transition: transform 0.2s ease;
+  background-color: #f7f5f1;
+  padding: 1.4rem;
+  border-radius: 14px;
+  border: 1px solid #dcd8d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .task-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.task-card p {
+  margin: 0.3rem 0;
+  color: #4a5568;
 }
 
 .actions {
@@ -218,22 +245,18 @@ input {
   margin-top: 1rem;
 }
 
+.divider {
+  margin: 2rem 0;
+  height: 1px;
+  background-color: #d1d5db;
+  width: 100%;
+}
+
 .error {
-  color: red;
+  color: #e53e3e;
   font-weight: bold;
 }
 
-/* Dark mode compatible */
-body.dark .task-card {
-  background-color: #1f2937;
-  color: #f9fafb;
-}
-
-body.dark input {
-  background-color: #374151;
-  color: white;
-  border-color: #555;
-}
 .completada {
   margin-top: 0.5rem;
   display: flex;
@@ -244,62 +267,133 @@ body.dark input {
 .estado-label {
   font-weight: 500;
   font-size: 0.95rem;
-  color: #374151;
+  color: #2d3748;
 }
 
 .estado-btn {
   border: none;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 9999px;
   font-weight: bold;
+  font-size: 0.9rem;
+  color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  color: white;
-  font-size: 0.9rem;
 }
 
 .estado-btn.completa {
-  background-color: #22c55e;
+  background-color: #4cad73;
 }
 
 .estado-btn.pendiente {
-  background-color: #f59e0b; /* mismo color que UserDetailView */
+  background-color: #d1a837;
 }
 
-/* Modo oscuro */
+body.dark {
+  background-color: #1a202c;
+  color: #f9fafb;
+}
+
+body.dark .task-card {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+  color: #f9fafb;
+}
+
+body.dark .task-card p {
+  color: #f1f5f9;
+}
+
 body.dark .estado-label {
-  color: #d1d5db;
+  color: #e2e8f0;
 }
 
 body.dark .estado-btn.completa {
-  background-color: #16a34a;
+  background-color: #4cad73;
 }
 
 body.dark .estado-btn.pendiente {
-  background-color: #f59e0b;
+  background-color: #d1a837;
+  color: white;
 }
 
-body.dark .completada input[type="checkbox"] {
-  accent-color: #22c55e;
+body.dark .button.secondary {
+  background-color: #4cad73;
+  color: white;
+}
+body.dark .button.danger {
+  background-color: #e16060;
+  color: white;
+}
+body.dark .button.info {
+  background-color: #7b61ff;
+  color: white;
 }
 
-.divider {
-  margin: 2rem 0;
-  height: 1px;
+body.dark .task-container h2 {
+  color: #f9fafb !important;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
   background-color: #ccc;
-  width: 100%;
+  border-radius: 999px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.3s;
 }
 
-.button.modern {
-  background-color: #3b82f6;
-  padding: 0.75rem 1.5rem;
-  border-radius: 9999px;
-  font-size: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
 }
 
-.task-card p {
-  margin: 0.2rem 0;
+input:checked + .slider {
+  background-color: #4cad73;
 }
 
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.estado-text {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+body.dark .slider {
+  background-color: #4a5568;
+}
+
+body.dark input:checked + .slider {
+  background-color: #4cad73;
+}
+
+body.dark .estado-text {
+  color: #f1f5f9;
+}
 </style>

@@ -50,18 +50,19 @@ const volverAlMenu = () => {
 </script>
 
 <template>
+  <!-- Palabra Volver al menú -->
+    <div class="volver-link" @click="volverAlMenu"><span class="volver-texto">⬅ Volver al Menú</span></div>
+
   <main v-if="tarea">
-    <div class="header-bar">
-      <button class="volver-btn" @click="$router.push('/')">⬅ Volver al Menú</button>
-      <h2>📝 Detalle de Tarea</h2>
-    </div>
+    <h2>📝 Detalle de Tarea</h2>
+
     <p><strong>ID Tarea:</strong> {{ tarea.id }}</p>
     <p><strong>Título:</strong> {{ tarea.titulo }}</p>
     <p><strong>Descripción:</strong> {{ tarea.descripcion || 'No ingresada' }}</p>
     <p><strong>ID Usuario asignado:</strong> {{ idUsuario }}</p>
     <p>
-      <strong>Nombre Usuario asignado:</strong> {{ nombreUsuario }}
-      <button class="ver-btn" @click="verDetalleUsuario">Ver detalles de {{ nombreUsuario }}</button>
+      <strong>Nombre Usuario asignado: </strong>
+      <span class="usuario-link" @click="verDetalleUsuario">{{ nombreUsuario }}</span>
     </p>
     <p><strong>Completada:</strong> {{ tarea.completada ? 'Sí' : 'No' }}</p>
     <p><strong>Fecha límite:</strong> {{ formatFecha(tarea.deadline) || 'No asignada' }}</p>
@@ -74,31 +75,61 @@ main {
   max-width: 700px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: var(--card-color, white);
-  border-radius: 12px;
-  box-shadow: var(--shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
+  background-color: #f7f5f1;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: fadeIn 0.4s ease;
   font-size: 1.1rem;
   line-height: 1.6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2d3748;
 }
 
-h2 {
-  margin-bottom: 1.5rem;
+main h2 {
+  margin-top: 0;
+  padding-top: 0.5rem;
   font-size: 1.8rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  text-align: left;
 }
 
 p {
   margin-bottom: 0.8rem;
+  color: #4a5568;
 }
 
 strong {
-  color: var(--primary-color, #3b82f6);
+  color: #4f83cc;
 }
 
+.volver-link {
+  max-width: 700px;
+  margin: 1rem auto 0;
+  padding: 0 2rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.volver-link:hover {
+  text-decoration: underline;
+}
+
+/* ✅ usuario-link destacado, evocativo de navegación */
+.usuario-link {
+  color: #0ea5e9; /* Celeste vibrante */
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.usuario-link:hover {
+  color: #38bdf8;
+}
+
+/* Animación */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -110,71 +141,52 @@ strong {
   }
 }
 
-body.dark main {
-  background-color: #1f2937;
+/* 🌙 Modo oscuro */
+body.dark {
+  background-color: #1a202c;
   color: #f9fafb;
+}
+
+body.dark main {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+  color: #f9fafb;
+}
+
+body.dark p {
+  color: #e2e8f0;
 }
 
 body.dark strong {
   color: #60a5fa;
 }
 
-.ver-btn {
-  margin-left: 1rem;
-  padding: 0.3rem 0.8rem;
-  background-color: #1eb8ff;
-  color: rgb(255, 255, 255);
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+body.dark .volver-link {
+  color: #ffffff;
+}
+body.dark .volver-link:hover {
+  color: #60a5fa;
 }
 
-.ver-btn:hover {
-  background-color: #1eb8ff;
+body.dark .usuario-link {
+  color: #38bdf8;
+}
+body.dark .usuario-link:hover {
+  color: #7dd3fc;
 }
 
-body.dark .ver-btn {
-  background-color: #2563eb;
-}
-
-body.dark .ver-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.header-bar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.volver-btn {
-  position: absolute;
-  left: 0;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.9rem;
-  border-radius: 8px;
+.volver-texto {
+  color: #000000;
   font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.volver-btn:hover {
-  background-color: #2563eb;
+body.dark .volver-texto {
+  color: #ffffff;
 }
 
-body.dark .volver-btn {
-  background-color: #2563eb;
+body.dark main h2 {
+  color: #f9fafb;
+  text-decoration-color: #ffffff;
 }
-
-body.dark .volver-btn:hover {
-  background-color: #1d4ed8;
-}
-
 
 </style>

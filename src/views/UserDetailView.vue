@@ -69,9 +69,15 @@ const chartOptions = {
     legend: { position: 'top' }
   }
 }
+
+const volverAlMenu = () => {
+  router.push('/task')
+}
+
 </script>
 
 <template>
+<div class="volver-link" @click="volverAlMenu"><span class="volver-texto">⬅ Volver al Menú</span></div>
   <main v-if="usuario">
     <h2>👨‍🎓 Detalle de Usuario</h2>
     <p><strong>ID:</strong> {{ usuario.id }}</p>
@@ -90,13 +96,13 @@ const chartOptions = {
         <h4>{{ tarea.titulo }}</h4>
         <p>📅 Fecha límite: {{ formatFecha(tarea.deadline) }}</p>
         <p>
-          <strong>Estado:</strong>
-          <span :class="tarea.completada ? 'badge complete' : 'badge pending'">
+        Estado:
+        <strong :class="tarea.completada ? 'texto-verde' : 'texto-amarillo'">
             {{ tarea.completada ? 'Completada' : 'Pendiente' }}
-          </span>
+        </strong>
         </p>
-        <p><strong>Descripción:</strong> {{ tarea.descripcion || 'No ingresada' }}</p>
-        <button class="button info" @click="verDetalleTarea(tarea.id)">Vista Detallada</button>
+        <p>Descripción: {{ tarea.descripcion || 'No ingresada' }}</p>            
+        <button class="button info" @click="verDetalleTarea(tarea.id)">Detalles</button>
       </div>
     </div>
     <p v-else>📭 Este usuario no tiene tareas asignadas.</p>
@@ -118,85 +124,102 @@ main {
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: var(--card-color, white);
-  border-radius: 12px;
-  box-shadow: var(--shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
+  background-color: #f7f5f1;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: fadeIn 0.4s ease;
   font-size: 1.1rem;
   line-height: 1.6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2d3748;
 }
 
 h2, h3 {
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  color: #2d3748;
 }
 
 h4 {
   margin: 0.5rem 0;
   font-size: 1.2rem;
+  color: #1f2937;
 }
 
 p {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
+  color: #4a5568;
 }
 
 strong {
-  color: var(--primary-color, #3b82f6);
+  color: #4f83cc;
 }
 
 .divider {
   margin: 2rem 0;
   height: 1px;
-  background-color: #ddd;
+  background-color: #d1d5db;
 }
 
 .task-list {
   display: grid;
-  gap: 1rem;
+  gap: 1.2rem;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .task-card {
-  background-color: var(--card-color, #f9fafb);
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow, 0 2px 6px rgba(0, 0, 0, 0.08));
+  background-color: #f7f5f1;
+  padding: 1.4rem;
+  border-radius: 14px;
+  border: 1px solid #dcd8d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.task-card p {
+  margin: 0.3rem 0;
+  color: #4a5568;
+}
+
+.estado-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #2d3748;
+}
+
+.estado-text {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.estado-text.completa {
+  color: #4cad73;
+}
+
+.estado-text.pendiente {
+  color: #d1a837;
 }
 
 .button.info {
-  background-color: #6366f1;
+  background-color: #7b61ff;
   color: white;
   border: none;
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
   margin-top: 0.8rem;
+  transition: background-color 0.3s ease;
 }
-
 .button.info:hover {
-  background-color: #4f46e5;
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  border-radius: 9999px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  margin-left: 0.5rem;
-}
-
-.badge.complete {
-  background-color: #22c55e;
-  color: white;
-}
-
-.badge.pending {
-  background-color: #f59e0b;
-  color: white;
+  background-color: #684de0;
 }
 
 .chart-box {
@@ -204,16 +227,117 @@ strong {
   margin: 2rem auto;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🌙 Modo oscuro */
 body.dark main {
-  background-color: #1f2937;
+  background-color: #2d3748;
   color: #f9fafb;
 }
 
+body.dark h2,
+body.dark h3,
+body.dark h4 {
+  color: #f9fafb;
+}
+
+body.dark p {
+  color: #e2e8f0;
+}
+
+body.dark strong {
+  color: #60a5fa;
+}
+
 body.dark .task-card {
-  background-color: #111827;
+  background-color: #1f2937;
+  border: 1px solid #4a5568;
+  color: #f1f5f9;
+}
+
+body.dark .task-card p {
+  color: #f1f5f9;
+}
+
+body.dark .estado-label {
+  color: #e2e8f0;
+}
+
+body.dark .estado-text.completa {
+  color: #4cad73;
+}
+
+body.dark .estado-text.pendiente {
+  color: #facc15;
 }
 
 body.dark .divider {
-  background-color: #374151;
+  background-color: #4a5568;
 }
+
+body.dark .button.info {
+  background-color: #7b61ff;
+  color: white;
+}
+body.dark .button.info:hover {
+  background-color: #684de0;
+}
+
+.texto-verde {
+  color: #4cad73;
+  font-weight: 600;
+}
+
+.texto-amarillo {
+  color: #d1a837;
+  font-weight: 600;
+}
+
+body.dark .texto-verde {
+  color: #4cad73;
+}
+
+body.dark .texto-amarillo {
+  color: #facc15;
+}
+
+.volver-link {
+  max-width: 900px;
+  margin: 1rem auto 0;
+  padding: 0 2rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.volver-link:hover {
+  text-decoration: underline;
+}
+
+.volver-texto {
+  color: #000000;
+  font-weight: bold;
+}
+
+body.dark .volver-link {
+  color: #ffffff;
+}
+body.dark .volver-link:hover {
+  color: #60a5fa;
+}
+
+body.dark .volver-texto {
+  color: #ffffff;
+}
+
 </style>
