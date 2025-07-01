@@ -97,6 +97,17 @@ watch(darkMode, (value) => {
   <div v-else>
     <RouterView />
   </div>
+
+  <footer class="app-footer">
+  <div class="footer-content">
+    <p>&copy; {{ new Date().getFullYear() }} Gestor de Tareas - Desarrollado por Lucio Giraldez y Matías Valansi</p>
+    
+    <p><a href="https://github.com/tuUsuario" target="_blank" rel="noopener" class="footer-link">
+      🌐 GitHub 
+    </a>- Tecnologías Usadas: Vue.js, Node.js</p>     
+  </div>
+</footer>
+
 </template>
 
 
@@ -309,4 +320,49 @@ body.dark h2 {
     transform: translateY(0);
   }
 }
+
+.app-footer {
+  margin-top: 3rem;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #4b5563;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-link {
+  color: #4f83cc;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #3d6db5;
+}
+
+/* 🌙 Dark mode compatible */
+body.dark .app-footer {
+  background-color: #1f2937;
+  color: #d1d5db;
+  border-top: 1px solid #374151;
+}
+
+body.dark .footer-link {
+  color: #60a5fa;
+}
+
+body.dark .footer-link:hover {
+  color: #93c5fd;
+}
+
 </style>

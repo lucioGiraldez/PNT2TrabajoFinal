@@ -71,14 +71,23 @@ const chartOptions = {
 }
 
 const volverAlMenu = () => {
-  router.push('/task')
+  router.push(`/users`)
 }
 
 </script>
 
 <template>
-<div class="volver-link" @click="volverAlMenu"><span class="volver-texto">⬅ Volver al Menú</span></div>
-  <main v-if="usuario">
+
+<div class="top-bar">
+    <button class="volver-btn" @click="volverAlMenu">
+      ⬅ Volver al Menú 🏠
+    </button>
+    <div class="titulo-box">
+      <h2>Detalle del Usuario</h2>
+    </div>
+ </div>
+
+<main v-if="usuario">
     <h2>👨‍🎓 Detalle de Usuario</h2>
     <p><strong>ID:</strong> {{ usuario.id }}</p>
     <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
@@ -338,6 +347,54 @@ body.dark .volver-link:hover {
 
 body.dark .volver-texto {
   color: #ffffff;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  max-width: 900px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Botón volver moderno */
+.volver-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+  margin-left: 0;
+}
+.volver-btn:hover {
+  background-color: #2563eb;
+}
+
+/* Contenedor del título más estrecho y centrado */
+.titulo-box {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #e0e7ff;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.titulo-box h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #1e40af;
+  font-weight: bold;
 }
 
 </style>
