@@ -103,8 +103,16 @@ const volverAlMenu = () => {
     <p><strong>ID:</strong> {{ usuario.id }}</p>
     <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
     <p><strong>Email:</strong> {{ usuario.email }}</p>
-    <p><strong>Celular:</strong> {{ usuario.celular || 'No cargado' }}
-    <img src="../../public/logoWhatsapp.png" alt="contactar" class="whatsapp-icon" />
+    <p>
+      <strong>Celular:</strong> {{ usuario.celular || 'No cargado' }}
+      <a
+        v-if="usuario.celular"
+        :href="'https://wa.me/549' + usuario.celular.replace(/[^0-9]/g, '')"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="../../public/logoWhatsapp.png" alt="WhatsApp" class="whatsapp-icon" />
+      </a>
     </p>
     <p><strong>Rol:</strong> {{ usuario.rol || 'No asignado' }}</p>
     <p><strong>Descripción:</strong> {{ usuario.descripcion || 'No ingresada' }}</p>
