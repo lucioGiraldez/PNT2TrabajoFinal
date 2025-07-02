@@ -12,7 +12,7 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-
+import { useUserStore } from '@/stores/user'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -24,6 +24,9 @@ const tareasUsuario = ref([])
 
 const tareasTotales = ref(0)
 const tareasCompletadas = ref(0)
+
+const store = useUserStore()
+
 
 const formatFecha = (fechaStr) => {
   if (!fechaStr) return 'No disponible'
@@ -92,9 +95,12 @@ const volverAlMenu = () => {
     <p><strong>ID:</strong> {{ usuario.id }}</p>
     <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
     <p><strong>Email:</strong> {{ usuario.email }}</p>
-    <p><strong>Celular:</strong> {{ usuario.celular || 'No cargado' }}</p>
+    <p><strong>Celular:</strong> {{ usuario.celular || 'No cargado' }}
+    <img src="../../public/logoWhatsapp.png" alt="contactar" class="whatsapp-icon" />
+    </p>
     <p><strong>Rol:</strong> {{ usuario.rol || 'No asignado' }}</p>
     <p><strong>Descripción:</strong> {{ usuario.descripcion || 'No ingresada' }}</p>
+    <p><strong>Permisos de:</strong> {{ usuario.admin ? 'Administrador' : 'Usuario' }}</p>
     <p><strong>Fecha de creación usuario:</strong> {{ formatFecha(usuario.creado) }}</p>
 
     <div class="divider"></div>
@@ -395,6 +401,12 @@ body.dark .volver-texto {
   font-size: 1.6rem;
   color: #1e40af;
   font-weight: bold;
+}
+
+.whatsapp-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: top;
 }
 
 </style>

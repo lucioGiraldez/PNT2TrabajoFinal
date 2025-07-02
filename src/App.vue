@@ -55,14 +55,27 @@ watch(darkMode, (value) => {
 
 <template>
   <div v-if="isLoggedIn">
-    <!-- ✅ BARRA DE USUARIO SEPARADA -->
+    <!-- 🔐 BARRA DE USUARIO -->
     <div class="user-bar">
-      <span class="login-alert">🔐 Logueado como: <strong>{{ store.user.email }}</strong></span>
+      <div class="user-info">
+        <span class="login-alert">
+          🔐 Logueado como: <strong>{{ store.user.email }}</strong>
+        </span>
+        <span class="login-role">
+          Permisos de <strong>{{ store.user.admin ? 'Administrador' : 'Usuario' }}</strong>
+        </span>
+      </div>
+
       <div class="top-buttons">
-        <button class="toggle-button" @click="toggleDarkMode">{{ darkMode ? '☀️ Claro' : '🌙 Oscuro' }}</button>
-        <button class="toggle-button danger" @click="logout">🔓 Cerrar sesión</button>
+        <button class="toggle-button" @click="toggleDarkMode">
+          {{ darkMode ? '☀️ Claro' : '🌙 Oscuro' }}
+        </button>
+        <button class="toggle-button danger" @click="logout">
+          🔓 Cerrar sesión
+        </button>
       </div>
     </div>
+
 
     <!-- ✅ HEADER: LOGO Y NAVBAR SOBRIO -->
     <header class="header-bar">
@@ -86,11 +99,18 @@ watch(darkMode, (value) => {
         <RouterView />
       </main>
 
-      <div v-if="route.path === '/'">
+          
+    <div v-if="route.path === '/'">
+      <div v-if="store.user.admin">
         <h2>📊 Estadísticas Generales</h2>
         <DashboardStats />
         <GraficoTareas />
       </div>
+      <div v-else>
+        <h2>Bienvenido, {{ store.user.nombre }}</h2>
+        <p class="rol-alert">Estás logueado como <strong>Usuario</strong>. No tenés acceso a las estadísticas del inicio.</p>
+      </div>
+    </div>
     </div>
   </div>
 
@@ -128,23 +148,26 @@ body {
 }
 
 .header-inner {
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06); /* ✅ Borde suave */
-  padding: 1.2rem 1.5rem;
-  width: 100%;
-  max-width: 1000px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  padding-bottom: 3rem;
+  position: relative;
 }
 
-body.dark .header-inner {
-  background-color: #1e2733;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08); /* ✅ Borde sutil en modo oscuro */
+.header-inner::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px; /* más fino */
+  background: linear-gradient(to bottom, rgba(79, 131, 204, 0.1), transparent); /* menos opacidad */
+  pointer-events: none;
+}
+
+body.dark .header-inner::after {
+  background: linear-gradient(to bottom, rgba(96, 165, 250, 0.1), transparent); /* más suave */
 }
 
 .header-top {
@@ -196,21 +219,44 @@ body.dark .header-inner {
   color: white;
 }
 
-/* === BARRA DE USUARIO SEPARADA === */
 .user-bar {
   width: 100%;
-  padding: 0.8rem 2rem;
+  padding: 0.6rem 2rem;
+  background-color: rgba(240, 239, 239, 0.87);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background-color: transparent;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
-.login-alert {
-  font-size: 0.85rem;
-  color: #4b5563;
+body.dark .user-bar {
+  background-color: rgba(12, 21, 44, 0.7);
 }
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.88rem;
+}
+
+
+.login-alert {
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.login-role {
+  font-size: 0.85rem;
+  color: #1f2937;
+  margin-left: 1.5rem; /* opcional si querés alinearlo un poco a la derecha */
+}
+
+body.dark .login-alert,
+body.dark .login-role {
+  color: #e0d7d7;
+}
+
 
 .top-buttons {
   display: flex;
@@ -266,12 +312,9 @@ body.dark {
 }
 
 body.dark .header-inner {
-  background-color: #1e293b;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-body.dark .login-alert {
-  color: #ffffff;
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
 }
 
 body.dark .nav-button {
@@ -364,5 +407,4 @@ body.dark .footer-link {
 body.dark .footer-link:hover {
   color: #93c5fd;
 }
-
 </style>

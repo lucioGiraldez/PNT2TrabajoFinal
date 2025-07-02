@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
@@ -12,12 +13,32 @@ const nuevaTarea = ref("")
 const cargando = ref(false)
 const error = ref("")
 const usuarios = ref([])
+const store = useUserStore()
+
+
+// const mostrarTareas = async () => {
+//   cargando.value = true
+//   try {
+//     const res = await axios.get(MOCKAPI)
+//     tareas.value = res.data
+//   } catch (err) {
+//     error.value = 'Error al cargar tareas.'
+//     console.error(err)
+//   } finally {
+//     cargando.value = false
+//   }
+// }
 
 const mostrarTareas = async () => {
   cargando.value = true
   try {
     const res = await axios.get(MOCKAPI)
-    tareas.value = res.data
+    const todasLasTareas = res.data
+
+    // Si el usuario es admin, ve todas. Si no, solo las suyas.
+    tareas.value = store.user.admin
+      ? todasLasTareas
+      : todasLasTareas.filter(t => t.userId == store.user.id)
   } catch (err) {
     error.value = 'Error al cargar tareas.'
     console.error(err)
@@ -25,6 +46,7 @@ const mostrarTareas = async () => {
     cargando.value = false
   }
 }
+
 
 const obtenerUsuarios = async () => {
   try {
@@ -105,7 +127,8 @@ const verDetalleTarea = (id) => {
 <template>
   <main class="task-container">
     <h2>Lista de tareas:</h2>
-    <button class="button modern" @click="irANuevaVistaTarea">+ Agregar Tarea</button>
+    <button v-if="store.user.admin"
+    class="button modern" @click="irANuevaVistaTarea">+ Agregar Tarea</button>
 
     <div class="divider"></div>
     <div v-if="cargando">⏳ Cargando tareas...</div>
@@ -129,8 +152,10 @@ const verDetalleTarea = (id) => {
         <p>👨‍🎓 Usuario: {{ getUserNameById(cadaTarea.userId) }}</p>
         <div class="actions">
           <button class="button info" @click="verDetalleTarea(cadaTarea.id)">Detalles</button>
+          <template v-if="store.user.admin">
           <button class="button danger" @click="eliminarTarea(cadaTarea.id, cadaTarea.titulo)">Eliminar</button>
           <button class="button secondary" @click="editarTarea(cadaTarea.id)">Editar</button>
+          </template>
         </div>
       </div>
     </div>

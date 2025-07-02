@@ -2,12 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
 const tarea = ref(null)
 const nombreUsuario = ref('')
 const idUsuario = ref('')
+const store = useUserStore()
 
 const TASK_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/tasks'
 const USER_API = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
@@ -82,7 +84,7 @@ const eliminarTarea = async () => {
     <p><strong>Descripción:</strong> {{ tarea.descripcion || 'No ingresada' }}</p>
     <p><strong>ID Usuario asignado:</strong> {{ idUsuario }}</p>
     <p>
-      <strong>Nombre Usuario asignado:</strong>
+      <strong>Nombre Usuario asignado: </strong>
       <span class="usuario-link" @click="verDetalleUsuario">{{ nombreUsuario }}</span>
     </p>
     <p><strong>Completada:</strong> {{ tarea.completada ? 'Sí' : 'No' }}</p>
@@ -91,8 +93,10 @@ const eliminarTarea = async () => {
   </main>
 
   <div class="acciones">
-  <button class="btn editar" @click="editarTarea">✏️ Editar Tarea</button>
-  <button class="btn eliminar" @click="eliminarTarea">🗑️ Eliminar Tarea</button>
+    <template v-if="store.user.admin">
+  <button class="btn editar" @click="editarTarea">Editar Tarea</button>
+  <button class="btn eliminar" @click="eliminarTarea">Eliminar Tarea</button>
+</template>
   </div>
 </template>
 
@@ -241,21 +245,21 @@ body.dark .titulo-box h2 {
 }
 
 .btn.editar {
-  background-color: #22c55e;
+  background-color: #4cad73;
   color: white;
 }
 
 .btn.editar:hover {
-  background-color: #16a34a;
+  background-color: #3c965f;
 }
 
 .btn.eliminar {
-  background-color: #ef4444;
+  background-color: #e16060;
   color: white;
 }
 
 .btn.eliminar:hover {
-  background-color: #dc2626;
+  background-color: #c84c4c;
 }
 
 /* Modo oscuro */
@@ -274,3 +278,20 @@ body.dark .btn.eliminar:hover {
 }
 
 </style>
+
+
+.button.secondary {
+  background-color: #4cad73;
+  color: white;
+}
+.button.secondary:hover {
+  background-color: #3c965f;
+}
+
+.button.danger {
+  background-color: #e16060;
+  color: white;
+}
+.button.danger:hover {
+  background-color: #c84c4c;
+}

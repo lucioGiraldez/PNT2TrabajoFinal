@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 
@@ -12,6 +13,31 @@ const usuarios = ref([])
 const tareas = ref([])
 const cargando = ref(false)
 const error = ref("")
+const store = useUserStore()
+
+// const mostrarUsuariosYTareas = async () => {
+//   cargando.value = true
+//   try {
+//     const [resUsuarios, resTareas] = await Promise.all([
+//       axios.get(MOCKAPI_USERS),
+//       axios.get(MOCKAPI_TASKS)
+//     ])
+//     usuarios.value = resUsuarios.data.map(usuario => {
+//       const tareasDelUsuario = resTareas.data.filter(t => t.userId == usuario.id)
+//       const completadas = tareasDelUsuario.filter(t => t.completada).length
+//       return {
+//         ...usuario,
+//         cantTareas: tareasDelUsuario.length,
+//         cantCompletadas: completadas
+//       }
+//     })
+//   } catch (err) {
+//     error.value = 'Error al cargar usuarios y tareas.'
+//     console.error(err)
+//   } finally {
+//     cargando.value = false
+//   }
+// }
 
 const mostrarUsuariosYTareas = async () => {
   cargando.value = true
@@ -20,7 +46,15 @@ const mostrarUsuariosYTareas = async () => {
       axios.get(MOCKAPI_USERS),
       axios.get(MOCKAPI_TASKS)
     ])
-    usuarios.value = resUsuarios.data.map(usuario => {
+
+    let usuariosFiltrados = resUsuarios.data
+
+    // 🛡️ Si no es admin, mostrar solo SU usuario
+    if (!store.user.admin) {
+      usuariosFiltrados = usuariosFiltrados.filter(u => u.id == store.user.id)
+    }
+
+    usuarios.value = usuariosFiltrados.map(usuario => {
       const tareasDelUsuario = resTareas.data.filter(t => t.userId == usuario.id)
       const completadas = tareasDelUsuario.filter(t => t.completada).length
       return {
@@ -82,8 +116,10 @@ const verDetalleUsuario = (id) => {
         <p>✅ Completadas: {{ u.cantCompletadas }}</p>
         <div class="actions">
           <button class="button info" @click="verDetalleUsuario(u.id)">Detalles</button>
+          <template v-if="store.user.admin">
           <button class="button danger" @click="eliminarUsuario(u.id, u.nombre)">Eliminar</button>
           <button class="button secondary" @click="editarUsuario(u.id)">Editar</button>
+          </template>
         </div>
       </div>
     </div>

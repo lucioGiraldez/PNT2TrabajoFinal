@@ -14,6 +14,7 @@ const email = ref('')
 const celular = ref('')
 const rol = ref('')
 const descripcion = ref('')
+const admin = ref(false)
 
 const cargando = ref(false)
 const error = ref('')
@@ -37,6 +38,7 @@ const cargarUsuario = async () => {
     celular.value = data.celular?.toString() || ''
     rol.value = data.rol || ''
     descripcion.value = data.descripcion || ''
+    admin.value = data.admin || false
   } catch (err) {
     error.value = 'Error al cargar el usuario.'
     console.error(err)
@@ -69,7 +71,8 @@ const guardarCambios = async () => {
       email: email.value,
       celular: celular.value,
       rol: rol.value,
-      descripcion: descripcion.value
+      descripcion: descripcion.value,
+      admin: admin.value
     })
     alert('✅ Usuario actualizado con éxito')
     router.push('/users')
@@ -144,6 +147,11 @@ onMounted(() => {
           placeholder="Descripción del usuario"
           required
         ></textarea>
+      </div>
+
+          <div class="checkbox-wrapper">
+        <label for="admin">¿Es administrador?</label>
+        <input id="admin" type="checkbox" v-model="admin" class="checkbox" />
       </div>
 
       <button type="submit">Guardar cambios</button>
@@ -296,5 +304,55 @@ body.dark button[type="submit"]:hover {
   color: #1e40af;
   font-weight: bold;
 }
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: left;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  font-weight: bold;
+  font-size: 1rem;
+  width: 100%;
+}
+
+
+.checkbox {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.checkbox:checked {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+
+.checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  left: 0.35rem;
+  top: 0;
+}
+
+/* 🌙 Estilo para modo oscuro */
+body.dark .checkbox {
+  border: 2px solid #4b5563;
+  background-color: #374151;
+}
+
+body.dark .checkbox:checked {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+
 </style>
 

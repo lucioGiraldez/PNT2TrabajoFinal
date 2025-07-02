@@ -2,25 +2,45 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import axios from 'axios'
 
 const email = ref('')
 const password = ref('')
 const router = useRouter()
 const userStore = useUserStore()
 
-const handleLogin = () => {
+const handleLogin = async () => {
   if (!email.value.trim() || !password.value.trim()) {
     return alert('Ingresá email y contraseña')
   }
 
-  const user = {
-    email: email.value,
-    password: password.value
-  }
+  try {
+    const res = await axios.get('https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users')
+    const usuarios = res.data
 
-  userStore.login(user)
-  alert(`Bienvenido ${user.email}`)
-  router.push('/')
+    console.log('Usuarios obtenidos:', usuarios)
+
+    const usuario = usuarios.find(u =>
+      u.email === email.value && u.contrasenia === password.value
+    )
+
+    if (!usuario) {
+      return alert('Credenciales inválidas')
+    }
+
+    userStore.login({
+      id: usuario.id,
+      email: usuario.email,
+      nombre: usuario.nombre,
+      admin: usuario.admin
+    })
+
+    alert(`Bienvenido ${usuario.nombre}`)
+    router.push('/')
+  } catch (err) {
+    console.error('Error en login:', err.response?.data || err.message || err)
+    alert('Error al intentar loguear')
+  }
 }
 </script>
 

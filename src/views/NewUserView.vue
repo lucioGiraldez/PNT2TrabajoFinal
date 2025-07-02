@@ -8,6 +8,7 @@ const email = ref('')
 const celular = ref('')
 const rol = ref('')
 const descripcion = ref('')
+const admin = ref(false) // nuevo campo
 
 const router = useRouter()
 const MOCKAPI = 'https://685c760b769de2bf085ccc90.mockapi.io/taskapi/users'
@@ -52,7 +53,9 @@ const agregarUsuario = async () => {
     celular: celular.value,
     rol: rol.value,
     descripcion: descripcion.value,
-    creado: new Date().toISOString()
+    admin: admin.value, // booleano
+    contrasenia: email.value, // contraseña igual al email
+    registradoEl: new Date().toISOString()
   }
 
   try {
@@ -105,6 +108,11 @@ const agregarUsuario = async () => {
       <div>
         <label for="descripcion">Descripción</label>
         <textarea v-model="descripcion" placeholder="Descripción del usuario" required></textarea>
+      </div>
+
+      <div class="checkbox-wrapper">
+        <label for="admin">¿Es administrador?</label>
+        <input id="admin" type="checkbox" v-model="admin" class="checkbox" />
       </div>
 
       <button type="submit">Agregar Usuario</button>
@@ -199,5 +207,40 @@ body.dark button[type="submit"] {
 body.dark button[type="submit"]:hover {
   background-color: #4b5563;
 }
-</style>
 
+.checkbox {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.checkbox:checked {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+
+.checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  left: 0.35rem;
+  top: 0;
+}
+
+body.dark .checkbox {
+  border: 2px solid #4b5563;
+  background-color: #374151;
+}
+
+body.dark .checkbox:checked {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+</style>
