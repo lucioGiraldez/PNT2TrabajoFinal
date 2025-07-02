@@ -69,15 +69,15 @@ const eliminarTarea = async () => {
 </script>
 
 <template>
-  <div class="top-bar">
-    <button class="volver-btn" @click="volverAlMenu">
-      ⬅ Volver al Menú 🏠
-    </button>
-    <div class="titulo-box">
-      <h2>📝 Detalle de Tarea</h2>
-    </div>
-  </div>
+   
+  <h2 class="titulo-usuario-modern">
+  Detalle de {{ tarea }}
+  </h2>
 
+  <div class="volver-link" @click="volverAlMenu">
+    <span class="volver-texto">← Volver al Menú 🏠</span>
+  </div>
+  
   <main v-if="tarea">
     <p><strong>ID Tarea:</strong> {{ tarea.id }}</p>
     <p><strong>Título:</strong> {{ tarea.titulo }}</p>
@@ -277,21 +277,56 @@ body.dark .btn.eliminar:hover {
   background-color: #ef4444;
 }
 
+.volver-link {
+  max-width: 900px;
+  margin: 1.5rem auto 0;
+  padding: 0 2rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.volver-texto {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-size: 1rem;
+}
+
+.volver-link:hover .volver-texto {
+  color: #2563eb;
+}
+
+/* Título principal centrado arriba */
+.titulo-usuario {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  color: #1e40af;
+}
+
+.titulo-usuario-modern {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: bold;
+  margin: 2rem auto 1.5rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  border-radius: 12px;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  max-width: 600px;
+}
+
+body.dark .titulo-usuario-modern {
+  background-color: #1e293b;
+  color: #93c5fd;
+  border-color: #60a5fa;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
+
 </style>
 
-
-.button.secondary {
-  background-color: #4cad73;
-  color: white;
-}
-.button.secondary:hover {
-  background-color: #3c965f;
-}
-
-.button.danger {
-  background-color: #e16060;
-  color: white;
-}
-.button.danger:hover {
-  background-color: #c84c4c;
-}

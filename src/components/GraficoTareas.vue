@@ -74,21 +74,7 @@ const chartOptions = {
 }
 </script>
 
-<!-- <template>
-  <div>
-    <h2>📊 Tareas asignadas por usuario</h2>
-    <Bar v-if="usuarios.length" :data="chartDataTareas" :options="chartOptions" />
 
-    <h2>📊 Tareas completadas por usuario</h2>
-    <Bar v-if="usuarios.length" :data="chartDataCompletadas" :options="chartOptions" />
-  </div>
-</template>
-
-<style scoped>
-h2 {
-  margin: 1rem 0;
-}
-</style> -->
 <template>
   <div class="grafico-container">
     <h2>Tareas asignadas por usuario</h2>
