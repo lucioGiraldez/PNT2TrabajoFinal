@@ -122,9 +122,9 @@ watch(darkMode, (value) => {
   <div class="footer-content">
     <p>&copy; {{ new Date().getFullYear() }} Gestor de Tareas - Desarrollado por Lucio Giraldez y Matías Valansi</p>
     
-    <p><a href="https://github.com/tuUsuario" target="_blank" rel="noopener" class="footer-link">
+    <p><a href="https://github.com/lucioGiraldez/PNT2TrabajoFinal" target="_blank" rel="noopener" class="footer-link">
       🌐 GitHub 
-    </a>- Tecnologías Usadas: Vue.js, Node.js</p>     
+    </a>- Tecnologías Usadas: Vue.js, Pinia, LocalStorage, Axios, VueChart.js</p>     
   </div>
 </footer>
 

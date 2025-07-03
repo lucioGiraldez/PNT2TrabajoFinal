@@ -66,7 +66,7 @@ const formatFecha = (fechaStr) => {
   return `${dia}/${mes}/${anio}`
 }
 
-const enviarEmail = (usuario, tarea) => {
+const enviarEmail = async (usuario, tarea) => {
   const templateParams = {
     to_name: usuario.nombre,
     to_email: usuario.email,
@@ -75,20 +75,20 @@ const enviarEmail = (usuario, tarea) => {
     task_deadline: formatFecha(tarea.deadline)
   }
 
-  emailjs.send(
-    'service_pfdfnbk',           
-    'template_d8v31ze',          
-    templateParams,
-    'E2DVeZ92a-5Pv2KmO'          
-  )
-  .then(() => {
+  try {
+    await emailjs.send(
+      'service_pfdfnbk',        // tu service ID
+      'template_d8v31ze',       // tu template ID
+      templateParams,
+      'E2DVeZ92a-5Pv2KmO'       // tu public key
+    )
     alert('📧 ¡Email enviado correctamente al usuario!')
-  })
-  .catch((err) => {
+  } catch (err) {
     alert('❌ Error al enviar el email. Revisá la consola para más detalles.')
     console.error('❌ Error al enviar email:', err)
-  })
+  }
 }
+
 
 
 

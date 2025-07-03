@@ -70,12 +70,12 @@ const eliminarTarea = async () => {
 
 <template>
    
-  <h2 class="titulo-usuario-modern">
-  Detalle de {{ tarea }}
+  <h2 v-if="tarea" class="titulo-tarea-modern">
+  Detalle de {{ tarea.titulo }}
   </h2>
 
   <div class="volver-link" @click="volverAlMenu">
-    <span class="volver-texto">← Volver al Menú 🏠</span>
+    <span class="volver-texto">← Volver al Menú</span>
   </div>
   
   <main v-if="tarea">
@@ -112,22 +112,7 @@ const eliminarTarea = async () => {
   flex-wrap: wrap;
 }
 
-/* Botón volver moderno */
-.volver-btn {
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 9999px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: background-color 0.3s ease;
-  margin-left: 0;
-}
-.volver-btn:hover {
-  background-color: #2563eb;
-}
+
 
 /* Contenedor del título más estrecho y centrado */
 .titulo-box {
@@ -202,12 +187,7 @@ body.dark .usuario-link {
 body.dark .usuario-link:hover {
   color: #7dd3fc;
 }
-body.dark .volver-btn {
-  background-color: #60a5fa;
-}
-body.dark .volver-btn:hover {
-  background-color: #3b82f6;
-}
+
 body.dark .titulo-box {
   background-color: #1e293b;
   border-color: #60a5fa;
@@ -297,36 +277,73 @@ body.dark .btn.eliminar:hover {
   color: #2563eb;
 }
 
-/* Título principal centrado arriba */
-.titulo-usuario {
+.titulo-tarea-modern {
   text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-top: 1rem;
-  color: #1e40af;
-}
-
-.titulo-usuario-modern {
-  text-align: center;
-  font-size: 1.9rem;
+  font-size: 1.7rem;
   font-weight: bold;
   margin: 2rem auto 1.5rem;
-  padding: 0.8rem 1.5rem;
-  background-color: #e0e7ff;
-  color: #1e3a8a;
+  padding: 1rem 1.8rem;
+  background-color: #f8f8f3;
+  color: #1f2937;
   border-radius: 12px;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   max-width: 600px;
+  animation: fadeInSlideUp 0.4s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body.dark .titulo-usuario-modern {
-  background-color: #1e293b;
-  color: #93c5fd;
-  border-color: #60a5fa;
-  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+body.dark .titulo-tarea-modern {
+  background-color: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
 }
 
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.volver-link {
+  width: 100%;
+  max-width: 600px; /* igual que el título y main */
+  margin: 1.5rem auto 0;
+  padding: 0 2rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.volver-texto {
+  color: #6f7a8b;
+  text-decoration: underline;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.volver-link:hover .volver-texto {
+  color: #2563eb;
+}
+
+body.dark .volver-link {
+  color: #ffffff;
+}
+
+body.dark .volver-link:hover {
+  color: #60a5fa;
+}
+
+body.dark .volver-texto {
+  color: #ffffff;
+}
 
 </style>
 

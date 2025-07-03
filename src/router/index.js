@@ -46,7 +46,13 @@ const routes = [
   path: '/userDetail/:id',
   name: 'userDetail',
   component: () => import('../views/UserDetailView.vue')
+},
+{
+  path: '/email-send',
+  name: 'emailSender',
+  component: () => import('../views/EmailSenderView.vue')
 }
+
 ]
 
 const router = createRouter({

@@ -93,11 +93,11 @@ onMounted(() => {
 <template>
   
   <h2 class="titulo-usuario-modern">
-  Detalle de {{ nombre }}
+  Editar registro {{ nombre }}
   </h2>
 
    <div class="volver-link" @click="volverAlMenu">
-    <span class="volver-texto">← Volver al Menú 🏠</span>
+    <span class="volver-texto">← Volver al Menú</span>
   </div>
 
 
@@ -417,6 +417,74 @@ body.dark .titulo-usuario-modern {
 
 .titulo-usuario-modern {
   animation: fadeInSlideUp 0.5s ease;
+}
+
+
+.titulo-usuario-modern {
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin: 2rem auto 1.5rem;
+  padding: 1rem 1.8rem;
+  background-color: #f8f8f3;
+  color: #1f2937;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  animation: fadeInSlideUp 0.4s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body.dark .titulo-usuario-modern {
+  background-color: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+}
+
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.volver-link {
+  width: 100%;
+  max-width: 600px; /* igual que form-container */
+  margin: 0 auto 1.5rem auto;
+  padding: 0 2rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.volver-texto {
+  color: #6f7a8b;
+  text-decoration: underline;
+  font-size: 1rem;
+}
+
+.volver-link:hover .volver-texto {
+  color: #2563eb;
+}
+
+body.dark .volver-link {
+  color: #ffffff;
+}
+
+body.dark .volver-link:hover {
+  color: #60a5fa;
+}
+
+body.dark .volver-texto {
+  color: #ffffff;
 }
 
 </style>

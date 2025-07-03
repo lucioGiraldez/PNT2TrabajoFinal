@@ -25,7 +25,6 @@ const tareasCompletadas = ref(0)
 
 const store = useUserStore()
 
-
 const formatFecha = (fechaStr) => {
   if (!fechaStr) return 'No disponible'
   const [anio, mes, dia] = fechaStr.slice(0, 10).split('-')
@@ -79,30 +78,30 @@ const chartOptions = {
   }
 }
 
-
-
-
 const volverAlMenu = () => {
-  router.push(`/users`)
+  router.push('/users')
 }
-
 </script>
 
 <template>
-
-   <h2 v-if="usuario" class="titulo-usuario-modern">
-  Detalle de {{ usuario.nombre }}
+  <h2 v-if="usuario" class="titulo-usuario-modern">
+    {{ usuario.nombre }}
   </h2>
 
   <div class="volver-link" @click="volverAlMenu">
-    <span class="volver-texto">← Volver al Menú 🏠</span>
+    <span class="volver-texto">← Volver al Menú</span>
   </div>
 
-<main v-if="usuario">
+  <main v-if="usuario">
     <h2>👨‍🎓 Detalle de Usuario</h2>
     <p><strong>ID:</strong> {{ usuario.id }}</p>
     <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
-    <p><strong>Email:</strong> {{ usuario.email }}</p>
+    <p>
+      <strong>Email:</strong> {{ usuario.email }}
+      <RouterLink :to="{ path: '/email-send', query: { email: usuario.email } }" title="Enviar correo">
+        <img src="../../public/logoGmail.png" alt="Gmail" class="gmail-icon" />
+      </RouterLink>
+    </p>
     <p>
       <strong>Celular:</strong> {{ usuario.celular || 'No cargado' }}
       <a
@@ -119,34 +118,36 @@ const volverAlMenu = () => {
     <p><strong>Permisos de:</strong> {{ usuario.admin ? 'Administrador' : 'Usuario' }}</p>
     <p><strong>Fecha de creación usuario:</strong> {{ formatFecha(usuario.creado) }}</p>
 
-    <div class="divider"></div>
+    <template v-if="store.user.admin">
+      <div class="divider"></div>
 
-    <h3>📝 Tareas asignadas</h3>
-    <div v-if="tareasUsuario.length" class="task-list">
-      <div v-for="tarea in tareasUsuario" :key="tarea.id" class="task-card">
-        <h4>{{ tarea.titulo }}</h4>
-        <p>📅 Fecha límite: {{ formatFecha(tarea.deadline) }}</p>
-        <p>
-        Estado:
-        <strong :class="tarea.completada ? 'texto-verde' : 'texto-amarillo'">
-            {{ tarea.completada ? 'Completada' : 'Pendiente' }}
-        </strong>
-        </p>
-        <p>Descripción: {{ tarea.descripcion || 'No ingresada' }}</p>            
-        <button class="button info" @click="verDetalleTarea(tarea.id)">Detalles</button>
+      <h3>📝 Tareas asignadas</h3>
+      <div v-if="tareasUsuario.length" class="task-list">
+        <div v-for="tarea in tareasUsuario" :key="tarea.id" class="task-card">
+          <h4>{{ tarea.titulo }}</h4>
+          <p>📅 Fecha límite: {{ formatFecha(tarea.deadline) }}</p>
+          <p>
+            Estado:
+            <strong :class="tarea.completada ? 'texto-verde' : 'texto-amarillo'">
+              {{ tarea.completada ? 'Completada' : 'Pendiente' }}
+            </strong>
+          </p>
+          <p>Descripción: {{ tarea.descripcion || 'No ingresada' }}</p>
+          <button class="button info" @click="verDetalleTarea(tarea.id)">Detalles</button>
+        </div>
       </div>
-    </div>
-    <p v-else>📭 Este usuario no tiene tareas asignadas.</p>
+      <p v-else>📭 Este usuario no tiene tareas asignadas.</p>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <h3>📊 Estadísticas del Usuario</h3>
-    <p><strong>Total de tareas:</strong> {{ tareasTotales }}</p>
-    <p><strong>Tareas completadas:</strong> {{ tareasCompletadas }}</p>
+      <h3>📊 Estadísticas del Usuario</h3>
+      <p><strong>Total de tareas:</strong> {{ tareasTotales }}</p>
+      <p><strong>Tareas completadas:</strong> {{ tareasCompletadas }}</p>
 
-    <div class="chart-box">
-      <Doughnut :data="chartData" :options="chartOptions" />
-    </div>
+      <div class="chart-box">
+        <Doughnut :data="chartData" :options="chartOptions" />
+      </div>
+    </template>
   </main>
 </template>
 
@@ -371,17 +372,6 @@ body.dark .volver-texto {
   color: #ffffff;
 }
 
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  max-width: 900px;
-  margin: 2rem auto 0;
-  padding: 0 1rem;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
 /* Botón volver moderno */
 .volver-btn {
   background-color: #3b82f6;
@@ -398,6 +388,21 @@ body.dark .volver-texto {
 .volver-btn:hover {
   background-color: #2563eb;
 }
+
+
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  max-width: 900px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+
 
 /* Contenedor del título más estrecho y centrado */
 .titulo-box {
@@ -436,7 +441,7 @@ body.dark .volver-texto {
 }
 
 .volver-texto {
-  color: #3b82f6;
+  color: #6f7a8b;
   text-decoration: underline;
   font-size: 1rem;
 }
@@ -445,7 +450,7 @@ body.dark .volver-texto {
   color: #2563eb;
 }
 
-/* Título principal centrado arriba */
+
 .titulo-usuario {
   text-align: center;
   font-size: 1.8rem;
@@ -456,29 +461,31 @@ body.dark .volver-texto {
 
 .titulo-usuario-modern {
   text-align: center;
-  font-size: 1.9rem;
+  font-size: 1.7rem;
   font-weight: bold;
   margin: 2rem auto 1.5rem;
-  padding: 0.8rem 1.5rem;
-  background-color: #e0e7ff;
-  color: #1e3a8a;
+  padding: 1rem 1.8rem;
+  background-color: #f8f8f3;
+  color: #1f2937;
   border-radius: 12px;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   max-width: 600px;
+  animation: fadeInSlideUp 0.4s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body.dark .titulo-usuario-modern {
-  background-color: #1e293b;
-  color: #93c5fd;
-  border-color: #60a5fa;
-  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+  background-color: #1f2937;
+  color: #f9fafb;
+  border: 1px solid #374151;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
 }
 
 @keyframes fadeInSlideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -489,5 +496,32 @@ body.dark .titulo-usuario-modern {
 .titulo-usuario-modern {
   animation: fadeInSlideUp 0.5s ease;
 }
+
+.whatsapp-icon:hover {
+  filter: drop-shadow(0 0 4px #25D366); /* efecto de resplandor */
+  transform: scale(1.05); /* leve aumento */
+  transition: all 0.2s ease;
+}
+
+a .whatsapp-icon {
+  cursor: pointer;
+}
+
+.gmail-icon:hover {
+  filter: drop-shadow(0 0 4px #3d40eb); /* efecto de resplandor */
+  transform: scale(1.05); /* leve aumento */
+  transition: all 0.2s ease;
+}
+
+a .gmail-icon {
+  cursor: pointer;
+}
+
+.gmail-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: top;
+}
+
 
 </style>

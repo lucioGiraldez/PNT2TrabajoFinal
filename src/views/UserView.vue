@@ -49,10 +49,10 @@ const mostrarUsuariosYTareas = async () => {
 
     let usuariosFiltrados = resUsuarios.data
 
-    // 🛡️ Si no es admin, mostrar solo SU usuario
-    if (!store.user.admin) {
-      usuariosFiltrados = usuariosFiltrados.filter(u => u.id == store.user.id)
-    }
+    
+    // if (!store.user.admin) {
+    //   usuariosFiltrados = usuariosFiltrados.filter(u => u.id == store.user.id)
+    // }
 
     usuarios.value = usuariosFiltrados.map(usuario => {
       const tareasDelUsuario = resTareas.data.filter(t => t.userId == usuario.id)
@@ -102,7 +102,9 @@ const verDetalleUsuario = (id) => {
 <template>
   <main class="task-container">
     <h2>Usuarios registrados</h2>
-    <button class="button modern" @click="irANuevaVistaUsuario">+ Agregar Usuario</button>
+    
+    <button v-if="store.user.admin"class="button modern" @click="irANuevaVistaUsuario">+ Agregar Usuario</button>
+    
     <div class="divider"></div>
     <div v-if="cargando">⏳ Cargando Usuarios...</div>
     <p v-else-if="error" class="error">{{ error }}</p>
