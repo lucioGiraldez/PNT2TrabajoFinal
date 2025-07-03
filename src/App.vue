@@ -124,7 +124,7 @@ watch(darkMode, (value) => {
     
     <p><a href="https://github.com/lucioGiraldez/PNT2TrabajoFinal" target="_blank" rel="noopener" class="footer-link">
       🌐 GitHub 
-    </a>- Tecnologías Usadas: Vue.js, Pinia, LocalStorage, Axios, VueChart.js</p>     
+    </a>- Tecnologías Usadas: Vue.js, Pinia, LocalStorage, Axios, VueChart.js, Email.Js</p>     
   </div>
 </footer>
 

@@ -25,11 +25,28 @@ const tareasCompletadas = ref(0)
 
 const store = useUserStore()
 
-const formatFecha = (fechaStr) => {
-  if (!fechaStr) return 'No disponible'
-  const [anio, mes, dia] = fechaStr.slice(0, 10).split('-')
-  return `${dia}/${mes}/${anio}`
+function formatFecha(timestampSegundos) {
+  if (!timestampSegundos) return 'Fecha no disponible';
+
+  // Convertimos de segundos a milisegundos
+  const fecha = new Date(timestampSegundos * 1000);
+
+  if (isNaN(fecha)) return 'Fecha inválida';
+
+  const opciones = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'America/Argentina/Buenos_Aires'
+  };
+
+  return new Intl.DateTimeFormat('es-AR', opciones).format(fecha) + ' hs';
 }
+
+
 
 const cargarDatos = async () => {
   try {
@@ -116,7 +133,8 @@ const volverAlMenu = () => {
     <p><strong>Rol:</strong> {{ usuario.rol || 'No asignado' }}</p>
     <p><strong>Descripción:</strong> {{ usuario.descripcion || 'No ingresada' }}</p>
     <p><strong>Permisos de:</strong> {{ usuario.admin ? 'Administrador' : 'Usuario' }}</p>
-    <p><strong>Fecha de creación usuario:</strong> {{ formatFecha(usuario.creado) }}</p>
+    <p><strong>Fecha de creación usuario:</strong> {{ formatFecha(usuario.registradoEl) }}</p>
+
 
     <template v-if="store.user.admin">
       <div class="divider"></div>
